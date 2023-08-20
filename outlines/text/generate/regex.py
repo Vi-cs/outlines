@@ -172,7 +172,7 @@ class Regex(Continuation):
         print('shapes')
         print(logits.shape)
         print(mask.shape)
-        print(mask.nonzero(tensor != -float('inf'), as_tuple=True))
+        print(torch.nonzero(mask != -float('inf'), as_tuple=True))
         print('#### End create_proposal')
         return logits + mask
 
