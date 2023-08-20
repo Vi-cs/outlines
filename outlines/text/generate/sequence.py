@@ -79,8 +79,8 @@ class Sequence:
         """
         print('#### BEGIN step')
         print('Input : ')
-        print(num_prompt_tokens)
-        print(token_ids)
+        print(str(num_prompt_tokens))
+        print(str(token_ids))
         print(attention_mask)
 
         num_input_dims = token_ids.ndim
@@ -111,8 +111,8 @@ class Sequence:
         probs = torch.atleast_2d(probs.squeeze())
 
         print('Output : ')
-        print(token_ids)
-        print(probs)
+        print(str(token_ids))
+        print(str(probs))
         print('#### END step')
         return token_ids, probs
 
@@ -242,6 +242,13 @@ class Sequence:
             is_finished[~is_finished] = self.is_finished(
                 updated_token_ids[:, num_prompt_tokens:]
             ).flatten()
+
+            result_temp = self.model.tokenizer.decode(token_ids[..., num_prompt_tokens:])
+            print('CALL decode : ')
+            print(str(result_temp))
+            result_temp = self.postprocess_completions(result_temp)
+            print('CALL postprocess_completions : ')
+            print(str(result_temp))
 
         result = self.model.tokenizer.decode(token_ids[..., num_prompt_tokens:])
         result = self.postprocess_completions(result)
