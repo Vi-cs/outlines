@@ -84,9 +84,16 @@ class Sequence:
         print(attention_mask)
 
         num_input_dims = token_ids.ndim
+
         probs = self.model(token_ids, attention_mask)
+        print('self.model(token_ids, attention_mask)')
+        print(probs)
         probs = self.create_proposal(token_ids[:, num_prompt_tokens:], probs)
+        print('self.create_proposal(token_ids[:, num_prompt_tokens:], probs)')
+        print(probs)
         probs = torch.nn.functional.softmax(probs, dim=-1)
+        print('torch.nn.functional.softmax(probs, dim=-1)')
+        print(probs)
 
         # Sample `samples`-many new tokens
         next_token_ids = vectorized_random_choice(rng, probs, samples)
