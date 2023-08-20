@@ -38,6 +38,10 @@ def build_regex_from_schema(schema: str):
     for step in schedule:
         regex += match_step_to_regex(step)
 
+    print('#### str => regex')
+    print(str)
+    print(regex)
+    print('#### end')
     return regex
 
 
@@ -161,15 +165,15 @@ def build_schedule_from_instance(instance: Dict, indent: int = 0):
     """
     schedule = []
     if "properties" in instance:
-        schedule.append("{\n")
+        #schedule.append("{\n")
         schedule += build_schedule_from_instance(instance["properties"], indent + 2)
-        if indent > 0:
-            schedule.append(" " * indent)
+        #if indent > 0:
+        #    schedule.append(" " * indent)
         schedule.append("}")
     else:
         for i, (name, annotation) in enumerate(instance.items()):
-            schedule.append(" " * indent)
-            schedule.append(f'"{name}": ')
+            #schedule.append(" " * indent)
+            schedule.append(f'"{name}":')
             if "anyOf" in annotation:
                 schedule.append(annotation)
             elif annotation["type"] == "object":
@@ -179,10 +183,13 @@ def build_schedule_from_instance(instance: Dict, indent: int = 0):
 
             # We cannot add commas after the last key-value pair in JSON
             if i == len(instance) - 1:
-                schedule.append("\n")
+                schedule.append("")
             else:
-                schedule.append(",\n")
-
+                schedule.append(",")
+    print('#### Dict => schedule')
+    print(Dict)
+    print(schedule)
+    print('#### end')
     return schedule
 
 
