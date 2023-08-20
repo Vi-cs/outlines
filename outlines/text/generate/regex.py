@@ -28,6 +28,10 @@ class Regex(Continuation):
     def __init__(self, model, regex_string: str, max_tokens: Optional[int]):
         super().__init__(model, max_tokens)
 
+        print('#### BEGIN Regex init')
+        print('Input : ')
+        print(regex_string)
+        print(max_tokens)
         vocabulary = model.tokenizer.vocabulary
         sorted_vocabulary = [
             model.tokenizer.convert_token_to_string(k)
@@ -130,6 +134,11 @@ class Regex(Continuation):
                     )
                 else:
                     pstate = ("REGEX", -1, last_token_idx)
+
+                print('pstate-2')
+                print(pstate[1])
+                print('pstate-3')
+                print(pstate[2])
 
                 new_pstates.append(pstate)
 
