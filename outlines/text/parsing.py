@@ -298,6 +298,11 @@ def find_partial_matches(
     plus the next, unvisited transition state.
 
     """
+    print('#### BEGIN find_partial_matches')
+    print('Input : ')
+    print(fsm)
+    print(input_string)
+    print(start_state)
     if len(input_string) == 0 or input_string[0] not in fsm.alphabet:
         return set()
 
@@ -311,6 +316,12 @@ def find_partial_matches(
         fsm_map = ChainMap({fsm.initial: trans}, fsm.map)
         state = fsm.initial
         accepted_states: Tuple[int, ...] = ()
+
+        print('#### BEGIN find_partial_matches _partial_match')
+        print('Input : ')
+        print(fsm_map)
+        print(state)
+        print(accepted_states)
 
         for i, symbol in enumerate(input_string):
             if anything_else in fsm.alphabet and symbol not in fsm.alphabet:
@@ -343,7 +354,9 @@ def find_partial_matches(
             n_matched, path = _partial_match(trans)
             if path is not None:
                 res.add((n_matched, (state,) + path))
-
+    print('Output : ')
+    print(res)
+    print('#### END find_partial_matches')
     return res
 
 
