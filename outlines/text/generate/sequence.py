@@ -77,6 +77,12 @@ class Sequence:
         `(samples,) + batch_shape`.
 
         """
+        print('#### BEGIN step')
+        print('Input : ')
+        print(num_prompt_tokens)
+        print(token_ids)
+        print(attention_mask)
+
         num_input_dims = token_ids.ndim
         probs = self.model(token_ids, attention_mask)
         probs = self.create_proposal(token_ids[:, num_prompt_tokens:], probs)
@@ -104,6 +110,10 @@ class Sequence:
         token_ids = torch.atleast_2d(token_ids.squeeze())
         probs = torch.atleast_2d(probs.squeeze())
 
+        print('Output : ')
+        print(token_ids)
+        print(probs)
+        print('#### END step')
         return token_ids, probs
 
     def expand_attention_mask(
