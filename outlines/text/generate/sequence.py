@@ -77,24 +77,24 @@ class Sequence:
         `(samples,) + batch_shape`.
 
         """
-        print('#### BEGIN step')
-        print('Input : ')
-        print(str(num_prompt_tokens))
-        print(str(token_ids))
-        print(attention_mask)
+        #print('#### BEGIN step')
+        #print('Input : ')
+        #print(str(num_prompt_tokens))
+        #print(str(token_ids))
+        #print(attention_mask)
 
         num_input_dims = token_ids.ndim
 
         probs = self.model(token_ids, attention_mask)
         probs = self.create_proposal(token_ids[:, num_prompt_tokens:], probs)
         probs = torch.nn.functional.softmax(probs, dim=-1)
-        print('torch.nn.functional.softmax(probs, dim=-1)')
-        print(probs)
+        #print('torch.nn.functional.softmax(probs, dim=-1)')
+        #print(probs)
 
         # Sample `samples`-many new tokens
         next_token_ids = vectorized_random_choice(rng, probs, samples)
-        print('next_token_ids')
-        print(next_token_ids)
+        #print('next_token_ids')
+        #print(next_token_ids)
 
         # Add the missing `num_tokens` and `num_sample` dimensions
         next_token_ids = torch.unsqueeze(next_token_ids, -1)
@@ -115,10 +115,10 @@ class Sequence:
         token_ids = torch.atleast_2d(token_ids.squeeze())
         probs = torch.atleast_2d(probs.squeeze())
 
-        print('Output : ')
-        print(str(token_ids))
-        print(str(probs))
-        print('#### END step')
+        #print('Output : ')
+        #print(str(token_ids))
+        #print(str(probs))
+        #print('#### END step')
         return token_ids, probs
 
     def expand_attention_mask(
@@ -248,7 +248,8 @@ class Sequence:
                 updated_token_ids[:, num_prompt_tokens:]
             ).flatten()
 
-            #result_temp = self.model.tokenizer.decode(token_ids[..., num_prompt_tokens:])
+            print('CALL decode : ')
+            print(self.model.tokenizer.decode(token_ids[..., num_prompt_tokens:]))
             #print('CALL decode : ')
             #print(str(result_temp))
             #result_temp = self.postprocess_completions(result_temp)

@@ -28,10 +28,10 @@ class Regex(Continuation):
     def __init__(self, model, regex_string: str, max_tokens: Optional[int]):
         super().__init__(model, max_tokens)
 
-        print('#### BEGIN Regex init')
-        print('Input : ')
-        print(regex_string)
-        print(max_tokens)
+        #print('#### BEGIN Regex init')
+        #print('Input : ')
+        #print(regex_string)
+        #print(max_tokens)
         vocabulary = model.tokenizer.vocabulary
         sorted_vocabulary = [
             model.tokenizer.convert_token_to_string(k)
@@ -88,13 +88,13 @@ class Regex(Continuation):
             The next-token logits.
 
         """
-        print('#### BEGIN create_proposal')
-        print('Input : ')
-        print(generated_token_ids)
-        print(logits)
-        print('shapes')
-        print(generated_token_ids.shape)
-        print(logits.shape)
+        #print('#### BEGIN create_proposal')
+        #print('Input : ')
+        #print(generated_token_ids)
+        #print(logits)
+        #print('shapes')
+        #print(generated_token_ids.shape)
+        #print(logits.shape)
         if len(self.pstates) == 0:
             self.pstates = [
                 ("REGEX", self.regex_fsm.initial, 0)
@@ -107,13 +107,13 @@ class Regex(Continuation):
                 generated_token_ids,
                 self.pstates,
             ):
-                print('token_seq')
-                print(token_seq)
+                #print('token_seq')
+                #print(token_seq)
 
                 # Get the tokens we haven't already processed
                 readable_tokens = token_seq[last_token_idx:]
-                print('readable_tokens_raw')
-                print(readable_tokens)
+                #print('readable_tokens_raw')
+                #print(readable_tokens)
                 # excluding any EOS tokens
                 not_eos_mask = [
                     tk != self.model.tokenizer.eos_token_id for tk in readable_tokens
@@ -125,10 +125,10 @@ class Regex(Continuation):
                     assert last_fsm_state > -1
 
                     sequence = self.model.tokenizer.decode(readable_tokens)
-                    print('readable_tokens')
-                    print(readable_tokens)
-                    print('sequence')
-                    print(sequence)
+                    #print('readable_tokens')
+                    #print(readable_tokens)
+                    #print('sequence')
+                    #print(sequence)
 
                     ((_, state_seq),) = find_partial_matches(
                         self.regex_fsm,
@@ -143,8 +143,8 @@ class Regex(Continuation):
                 else:
                     pstate = ("REGEX", -1, last_token_idx)
 
-                print('pstate')
-                print(pstate)
+                #print('pstate')
+                #print(pstate)
 
                 new_pstates.append(pstate)
 
@@ -166,14 +166,14 @@ class Regex(Continuation):
 
         mask = torch.concatenate(masks, dim=0)
 
-        print('Output : ')
-        print(logits)
-        print(mask)
-        print('shapes')
-        print(logits.shape)
-        print(mask.shape)
+        #print('Output : ')
+        #print(logits)
+        #print(mask)
+        #print('shapes')
+        #print(logits.shape)
+        #print(mask.shape)
         #print(torch.nonzero(mask != -float('inf'), as_tuple=True))
-        print('#### End create_proposal')
+        #print('#### End create_proposal')
         return logits + mask
 
 
