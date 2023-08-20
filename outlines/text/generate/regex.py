@@ -92,6 +92,9 @@ class Regex(Continuation):
         print('Input : ')
         print(generated_token_ids)
         print(logits)
+        print('shapes')
+        print(generated_token_ids.shape)
+        print(logits.shape)
         if len(self.pstates) == 0:
             self.pstates = [
                 ("REGEX", self.regex_fsm.initial, 0)
@@ -140,10 +143,8 @@ class Regex(Continuation):
                 else:
                     pstate = ("REGEX", -1, last_token_idx)
 
-                print('pstate-2')
-                print(pstate[1])
-                print('pstate-3')
-                print(pstate[2])
+                print('pstate')
+                print(pstate)
 
                 new_pstates.append(pstate)
 
@@ -168,6 +169,10 @@ class Regex(Continuation):
         print('Output : ')
         print(logits)
         print(mask)
+        print('shapes')
+        print(logits.shape)
+        print(mask.shape)
+        print(mask.nonzero(tensor != -float('inf'), as_tuple=True))
         print('#### End create_proposal')
         return logits + mask
 

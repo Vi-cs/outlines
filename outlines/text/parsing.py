@@ -430,9 +430,9 @@ def map_partial_states_to_vocab(
         for symbol_name, fsm in terminals_to_fsms_map.items():
             for state in fsm.finals:
                 pstate_to_vocab[(symbol_name, state)].add(final_state_string_idx)
-    print('Output : ')
-    print(pstate_to_vocab)
-    print(possible_paths)
+    #print('Output : ')
+    #print(pstate_to_vocab)
+    #print(possible_paths)
 
     print('#### END map_partial_states_to_vocab')
     return pstate_to_vocab, possible_paths
