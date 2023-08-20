@@ -84,7 +84,10 @@ class Regex(Continuation):
             The next-token logits.
 
         """
-
+        print('#### BEGIN create_proposal')
+        print('Input : ')
+        print(generated_token_ids)
+        print(logits)
         if len(self.pstates) == 0:
             self.pstates = [
                 ("REGEX", self.regex_fsm.initial, 0)
@@ -110,6 +113,10 @@ class Regex(Continuation):
                     assert last_fsm_state > -1
 
                     sequence = self.model.tokenizer.decode(readable_tokens)
+                    print('readable_tokens')
+                    print(readable_tokens)
+                    print('sequence')
+                    print(sequence)
 
                     ((_, state_seq),) = find_partial_matches(
                         self.regex_fsm,
@@ -144,6 +151,10 @@ class Regex(Continuation):
 
         mask = torch.concatenate(masks, dim=0)
 
+        print('Output : ')
+        print(logits)
+        print(mask)
+        print('#### End create_proposal')
         return logits + mask
 
 
