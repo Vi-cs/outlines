@@ -90,6 +90,8 @@ class Sequence:
 
         # Sample `samples`-many new tokens
         next_token_ids = vectorized_random_choice(rng, probs, samples)
+        print('next_token_ids')
+        print(next_token_ids)
 
         # Add the missing `num_tokens` and `num_sample` dimensions
         next_token_ids = torch.unsqueeze(next_token_ids, -1)

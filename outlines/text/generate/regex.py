@@ -104,8 +104,13 @@ class Regex(Continuation):
                 generated_token_ids,
                 self.pstates,
             ):
+                print('token_seq')
+                print(token_seq)
+
                 # Get the tokens we haven't already processed
                 readable_tokens = token_seq[last_token_idx:]
+                print('readable_tokens_raw')
+                print(readable_tokens)
                 # excluding any EOS tokens
                 not_eos_mask = [
                     tk != self.model.tokenizer.eos_token_id for tk in readable_tokens
