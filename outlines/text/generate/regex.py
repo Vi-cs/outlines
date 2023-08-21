@@ -147,7 +147,7 @@ class Regex(Continuation):
                         self.regex_fsm,
                         "".join(sequence),
                         start_state=last_fsm_state,
-                        verbose=True
+                        verbose=False
                     )
                     pstate = (
                         "REGEX",

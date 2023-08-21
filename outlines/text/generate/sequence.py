@@ -250,6 +250,7 @@ class Sequence:
 
             print('CALL decode : ')
             print(self.model.tokenizer.decode(token_ids[..., num_prompt_tokens:]))
+            print(token_ids[..., num_prompt_tokens:])
             #print('CALL decode : ')
             #print(str(result_temp))
             #result_temp = self.postprocess_completions(result_temp)
