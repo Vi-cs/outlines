@@ -2,6 +2,8 @@ import collections
 import math
 from json import dumps
 from typing import List, Optional, Tuple, Union
+import pickle
+import os
 
 import interegular
 import torch
@@ -46,12 +48,23 @@ class Regex(Continuation):
                 return False
             return True
 
-        pstate_to_vocab, paths = map_partial_states_to_vocab(
-            list(sorted_vocabulary),
-            {"REGEX": self.regex_fsm},
-            partial_match_filter,
-            final_state_string=model.tokenizer.eos_token,
-        )
+
+        if os.path.exists('/content/pstate_to_vocab.pkl') and os.path.exists('/content/paths.pkl'):
+            with open("/content/pstate_to_vocab.pkl", "rb") as pickle_file:
+                pstate_to_vocab = pickle.load(pickle_file)
+            with open("/content/paths.pkl", "rb") as pickle_file:
+                paths = pickle.load(pickle_file)
+        else:
+            pstate_to_vocab, paths = map_partial_states_to_vocab(
+                list(sorted_vocabulary),
+                {"REGEX": self.regex_fsm},
+                partial_match_filter,
+                final_state_string=model.tokenizer.eos_token,
+            )
+            with open("/content/pstate_to_vocab.pkl", "wb") as pickle_file:
+                pickle.dump(pstate_to_vocab, pickle_file)
+            with open("/content/paths.pkl", "wb") as pickle_file:
+                pickle.dump(paths, pickle_file)
 
         # Check whether a terminal path (from the initial state of the FSM to
         # one of its terminal states) exists, raise an exception otherwise.
