@@ -77,7 +77,7 @@ class Sequence:
         `(samples,) + batch_shape`.
 
         """
-        #print('#### BEGIN step')
+        print('######################### BEGIN step')
         #print('Input : ')
         #print(str(num_prompt_tokens))
         #print(str(token_ids))
@@ -236,6 +236,7 @@ class Sequence:
             is_finished = torch.zeros(batch_shape, dtype=torch.bool, device=self.device)
 
         while True:
+            print('###### sequence.__call__()')
             num_generated_tokens = token_ids.shape[-1] - num_prompt_tokens
             if torch.all(is_finished) or num_generated_tokens == self.max_tokens:
                 break

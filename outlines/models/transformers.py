@@ -31,10 +31,17 @@ class Transformers:
         # `transformers` model accept `input_ids` of size at most equal to 2. We
         # thus reshape the input array, call the model and reshape the output
         # logits.
+        print('#### BEGIN Transformers call')
+        print('Input :')
+        print(input_ids)
+        print(attention_mask)
+
         batch_shape = input_ids.shape[:-1]
         num_tokens = input_ids.shape[-1]
         input_ids = input_ids.reshape(math.prod(batch_shape), num_tokens)
 
+        print('input_ids')
+        print(input_ids)
         output = self.model(
             input_ids,
             attention_mask=attention_mask,
@@ -42,7 +49,11 @@ class Transformers:
             output_attentions=False,
             output_hidden_states=False,
         )
+        print('output')
+        print(output)
         next_token_logits = output.logits[:, -1, :]
+        print('next_token_logits')
+        print(next_token_logits)
 
         next_token_logits = next_token_logits.reshape(batch_shape + (-1,))
 
