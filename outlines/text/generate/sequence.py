@@ -316,4 +316,12 @@ def vectorized_random_choice(
     print('vectorized_random_choice - idx')
     print(idx)
 
-    return idx
+    #return idx
+    # Use torch.argmax to find the index of the maximum probability along the last axis.
+    max_indices = torch.argmax(p, dim=-1)
+    print('vectorized_random_choice - max_indices')
+    print(max_indices)
+
+    return max_indices
+
+
