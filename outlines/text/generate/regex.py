@@ -139,7 +139,7 @@ class Regex(Continuation):
 
                     sequence = self.model.tokenizer.decode(readable_tokens)
                     #print('readable_tokens')
-                    #print(readable_tokens)
+                    #print(self.model.tokenizer.decode(readable_tokens))
                     #print('sequence')
                     #print(sequence)
 
@@ -147,7 +147,7 @@ class Regex(Continuation):
                         self.regex_fsm,
                         "".join(sequence),
                         start_state=last_fsm_state,
-                        verbose=True
+                        verbose=False
                     )
                     pstate = (
                         "REGEX",
