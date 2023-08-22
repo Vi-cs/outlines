@@ -86,10 +86,10 @@ class Sequence:
         num_input_dims = token_ids.ndim
 
         probs = self.model(token_ids, attention_mask)
-        print('probs')
+        print('token_ids[:, num_prompt_tokens:]')
         print(probs)
-        print('decoded probs')
-        print(self.model.tokenizer.decode(probs))
+        print('decoded token_ids[:, num_prompt_tokens:]')
+        print(self.model.tokenizer.decode(token_ids[:, num_prompt_tokens:]))
         probs = self.create_proposal(token_ids[:, num_prompt_tokens:], probs)
         probs = torch.nn.functional.softmax(probs, dim=-1)
         #print('torch.nn.functional.softmax(probs, dim=-1)')
