@@ -104,8 +104,8 @@ class Sequence:
         next_token_ids = torch.unsqueeze(next_token_ids, -1)
         token_ids = torch.unsqueeze(token_ids, 0)
 
-        print('decoded next_token_ids')
-        print(self.model.tokenizer.decode(next_token_ids))
+        #print('decoded next_token_ids')
+        #print(self.model.tokenizer.decode(next_token_ids))
 
         # Expand the input `token_ids` array to be able to concatenate several
         # samples.
