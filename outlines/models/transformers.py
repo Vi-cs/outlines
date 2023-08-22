@@ -55,7 +55,11 @@ class Transformers:
         print('next_token_logits')
         print(next_token_logits)
 
+
         next_token_logits = next_token_logits.reshape(batch_shape + (-1,))
+
+        print('decode next_token_logits')
+        print(self.model.tokenizer.decode(next_token_logits))
 
         return next_token_logits
 

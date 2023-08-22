@@ -87,7 +87,7 @@ class Sequence:
 
         probs = self.model(token_ids, attention_mask)
         print('token_ids[:, num_prompt_tokens:]')
-        print(probs)
+        print(token_ids[:, num_prompt_tokens:])
         print('decoded token_ids[:, num_prompt_tokens:]')
         print(self.model.tokenizer.decode(token_ids[:, num_prompt_tokens:]))
         probs = self.create_proposal(token_ids[:, num_prompt_tokens:], probs)
@@ -103,6 +103,9 @@ class Sequence:
         # Add the missing `num_tokens` and `num_sample` dimensions
         next_token_ids = torch.unsqueeze(next_token_ids, -1)
         token_ids = torch.unsqueeze(token_ids, 0)
+
+        print('decoded next_token_ids')
+        print(self.model.tokenizer.decode(next_token_ids))
 
         # Expand the input `token_ids` array to be able to concatenate several
         # samples.
@@ -302,9 +305,15 @@ def vectorized_random_choice(
 
     """
     cumsum = torch.unsqueeze(p.cumsum(axis=-1), 0)
+    print('vectorized_random_choice - cumsum')
+    print(cumsum)
     rand = torch.rand(
         (samples,) + p.shape[:-1] + (1,), generator=rng, device=rng.device
     )
+    print('vectorized_random_choice - rand')
+    print(rand)
     idx = (cumsum < rand).sum(axis=-1)
+    print('vectorized_random_choice - idx')
+    print(idx)
 
     return idx
