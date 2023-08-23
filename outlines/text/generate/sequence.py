@@ -26,7 +26,7 @@ class Sequence:
         )
 
     def create_proposal(
-        self, generated_token_ids: torch.LongTensor, logits: torch.DoubleTensor
+            self, generated_token_ids: torch.LongTensor, logits: torch.DoubleTensor
     ) -> torch.DoubleTensor:
         """Create a new proposal from the next-token logits."""
         return logits
@@ -41,12 +41,12 @@ class Sequence:
         return completions
 
     def step(
-        self,
-        rng: torch.Generator,
-        num_prompt_tokens: int,
-        token_ids: torch.LongTensor,
-        attention_mask: torch.LongTensor,
-        samples: int = 1,
+            self,
+            rng: torch.Generator,
+            num_prompt_tokens: int,
+            token_ids: torch.LongTensor,
+            attention_mask: torch.LongTensor,
+            samples: int = 1,
     ) -> Tuple[torch.LongTensor, torch.FloatTensor]:
         """Generate one or several tokens that complete the input sequence.
 
@@ -78,10 +78,10 @@ class Sequence:
 
         """
         print('######################### BEGIN step')
-        #print('Input : ')
-        #print(str(num_prompt_tokens))
-        #print(str(token_ids))
-        #print(attention_mask)
+        # print('Input : ')
+        # print(str(num_prompt_tokens))
+        # print(str(token_ids))
+        # print(attention_mask)
 
         num_input_dims = token_ids.ndim
 
@@ -92,20 +92,20 @@ class Sequence:
         print(self.model.tokenizer.decode(token_ids[:, num_prompt_tokens:]))
         probs = self.create_proposal(token_ids[:, num_prompt_tokens:], probs)
         probs = torch.nn.functional.softmax(probs, dim=-1)
-        #print('torch.nn.functional.softmax(probs, dim=-1)')
-        #print(probs)
+        # print('torch.nn.functional.softmax(probs, dim=-1)')
+        # print(probs)
 
         # Sample `samples`-many new tokens
-        next_token_ids = vectorized_random_choice(rng, probs, samples)
-        #print('next_token_ids')
-        #print(next_token_ids)
+        next_token_ids = vectorized_random_choice(rng, probs, samples, tok)
+        # print('next_token_ids')
+        # print(next_token_ids)
 
         # Add the missing `num_tokens` and `num_sample` dimensions
         next_token_ids = torch.unsqueeze(next_token_ids, -1)
         token_ids = torch.unsqueeze(token_ids, 0)
 
-        #print('decoded next_token_ids')
-        #print(self.model.tokenizer.decode(next_token_ids))
+        # print('decoded next_token_ids')
+        # print(self.model.tokenizer.decode(next_token_ids))
 
         # Expand the input `token_ids` array to be able to concatenate several
         # samples.
@@ -122,14 +122,14 @@ class Sequence:
         token_ids = torch.atleast_2d(token_ids.squeeze())
         probs = torch.atleast_2d(probs.squeeze())
 
-        #print('Output : ')
-        #print(str(token_ids))
-        #print(str(probs))
-        #print('#### END step')
+        # print('Output : ')
+        # print(str(token_ids))
+        # print(str(probs))
+        # print('#### END step')
         return token_ids, probs
 
     def expand_attention_mask(
-        self, attention_mask: torch.LongTensor
+            self, attention_mask: torch.LongTensor
     ) -> torch.LongTensor:
         """Expand the attention mask after the last completion."""
         batch_shape = attention_mask.shape[:-1]
@@ -145,10 +145,10 @@ class Sequence:
         return attention_mask
 
     def update_token_ids(
-        self,
-        is_finished: torch.BoolTensor,
-        token_ids: torch.LongTensor,
-        token_ids_unfinished: torch.LongTensor,
+            self,
+            is_finished: torch.BoolTensor,
+            token_ids: torch.LongTensor,
+            token_ids_unfinished: torch.LongTensor,
     ) -> torch.LongTensor:
         """Update the array of token ids after the last completion.
 
@@ -195,10 +195,10 @@ class Sequence:
 
     @torch.inference_mode()
     def __call__(
-        self,
-        prompt: Union[str, List[str]],
-        samples: int = 1,
-        rng: Optional[torch.Generator] = None,
+            self,
+            prompt: Union[str, List[str]],
+            samples: int = 1,
+            rng: Optional[torch.Generator] = None,
     ) -> Union[str, List[str]]:
         """Generate a new sequence given a prompt.
 
@@ -259,11 +259,11 @@ class Sequence:
             print('CALL decode : ')
             print(self.model.tokenizer.decode(token_ids[..., num_prompt_tokens:]))
             print(token_ids[..., num_prompt_tokens:])
-            #print('CALL decode : ')
-            #print(str(result_temp))
-            #result_temp = self.postprocess_completions(result_temp)
-            #print('CALL postprocess_completions : ')
-            #print(str(result_temp))
+            # print('CALL decode : ')
+            # print(str(result_temp))
+            # result_temp = self.postprocess_completions(result_temp)
+            # print('CALL postprocess_completions : ')
+            # print(str(result_temp))
 
         result = self.model.tokenizer.decode(token_ids[..., num_prompt_tokens:])
         result = self.postprocess_completions(result)
@@ -275,9 +275,10 @@ class Sequence:
 
 
 def vectorized_random_choice(
-    rng: torch.Generator,
-    p: torch.FloatTensor,
-    samples: int = 1,
+        rng: torch.Generator,
+        p: torch.FloatTensor,
+        samples: int = 1,
+        tokenizer: any = None
 ):
     """Vectorized implementation of `np.random.choice`.
 
@@ -316,21 +317,23 @@ def vectorized_random_choice(
     print('vectorized_random_choice - idx')
     print(idx)
 
-    #return idx
+    # return idx
     # Use torch.argmax to find the index of the maximum probability along the last axis.
     max_indices = torch.argmax(p, dim=-1)
     max_indices = torch.unsqueeze(max_indices, dim=0)
     print('vectorized_random_choice - max_indices')
     print(max_indices)
 
-    if max_indices!=idx:
+    if max_indices != idx:
         print('DIFF TOKEN')
 
-    top_values, top_indices = torch.topk(p, 10, dim=2)
+    top_values, top_indices = torch.topk(p, 10, dim=-1)
     print(top_values)
     print(top_indices)
-    #self.model.tokenizer.decode(token_ids[..., num_prompt_tokens:])
+
+    '''if tokenizer != None:
+        print(tokenizer.decode(max_indices))
+        print(tokenizer.decode(idx))
+        print(tokenizer.decode(top_indices))'''
 
     return max_indices
-
-
