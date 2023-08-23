@@ -46,8 +46,11 @@ class Transformers:
         additional_data = torch.tensor([[13, 1104, 29540, 2016, 29537, 7559, 15602, 24913, 13, 29516,
                                          1312, 29540, 21168, 29540, 261, 29540, 20090, 29540, 25743, 29537,
                                          29500]])
+        additional_mask = torch.tensor([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                                         1]])
         input_ids=torch.concatenate([self.tokenizer.encode(promptAIRBUS)[0], additional_data], axis=-1)
-
+        attention_mask = torch.concatenate([self.tokenizer.encode(promptAIRBUS)[1], additional_mask], axis=-1)
 
         batch_shape = input_ids.shape[:-1]
         num_tokens = input_ids.shape[-1]
