@@ -96,7 +96,7 @@ class Sequence:
         # print(probs)
 
         # Sample `samples`-many new tokens
-        next_token_ids = vectorized_random_choice(rng, probs, samples, tok)
+        next_token_ids = vectorized_random_choice(rng, probs, samples, self.model.tokenizer)
         # print('next_token_ids')
         # print(next_token_ids)
 
@@ -331,9 +331,9 @@ def vectorized_random_choice(
     print(top_values)
     print(top_indices)
 
-    '''if tokenizer != None:
+    if tokenizer != None:
         print(tokenizer.decode(max_indices))
         print(tokenizer.decode(idx))
-        print(tokenizer.decode(top_indices))'''
+        print(tokenizer.decode(top_indices))
 
     return max_indices
