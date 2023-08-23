@@ -323,6 +323,14 @@ def vectorized_random_choice(
     print('vectorized_random_choice - max_indices')
     print(max_indices)
 
+    if max_indices!=idx:
+        print('DIFF TOKEN')
+
+    top_values, top_indices = torch.topk(p, 10, dim=2)
+    print(top_values)
+    print(top_indices)
+    #self.model.tokenizer.decode(token_ids[..., num_prompt_tokens:])
+
     return max_indices
 
 
