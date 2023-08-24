@@ -116,11 +116,14 @@ class TransformersTokenizer(Tokenizer):
     def convert_token_to_string(self, token: str) -> str:
         print('#### BEGIN convert_token_to_string')
         print(token)
-
+        raw_string = self.tokenizer.convert_tokens_to_string([token])
         string = self.tokenizer.convert_tokens_to_string([29570,token,29570])
-        print(string)
+
         string = string[1:-1]
-        print(string)
+        if raw_string!=string:
+            print('#### Token difference')
+            print(raw_string)
+            print(string)
         return string
 
 
