@@ -318,17 +318,20 @@ def find_partial_matches(
         state = fsm.initial
         accepted_states: Tuple[int, ...] = ()
 
-        #print('#### BEGIN find_partial_matches _partial_match')
-        #print('Input : ')
-        #print(fsm_map)
-        #print(state)
-        #print(accepted_states)
+        print('#### BEGIN find_partial_matches _partial_match - Input:')
+        print(f'fsm_map:{fsm_map} state:{state} accepted_states:{accepted_states}')
+
 
         for i, symbol in enumerate(input_string):
+            print(f'for {i}, {symbol} in enumerate({input_string}):')
+
+            print(f'if {anything_else} in fsm.alphabet and {symbol} not in fsm.alphabet:')
             if anything_else in fsm.alphabet and symbol not in fsm.alphabet:
                 symbol = anything_else
 
+            #understand how this part of code works : it seems that a blank space inut is not match with a token begining with a blank space
             trans_key = fsm.alphabet[symbol]
+            print(f'trans_key = fsm.alphabet[symbol]:{trans_key}')
 
             if not (state in fsm_map and trans_key in fsm_map[state]):
                 if state in fsm.finals:
@@ -337,6 +340,7 @@ def find_partial_matches(
                 return None, None
 
             state = fsm_map[state][trans_key]
+            print(f'state = fsm_map[state][trans_key]:{state}')
 
             accepted_states += (state,)
 
