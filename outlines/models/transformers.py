@@ -73,7 +73,7 @@ class Transformers:
 
 
         next_token_logits = next_token_logits.reshape(batch_shape + (-1,))
-
+        print('#### END Transformers call')
         return next_token_logits
 
 
