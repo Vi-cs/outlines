@@ -8,7 +8,6 @@ from outlines.models.tokenizer import Tokenizer
 if TYPE_CHECKING:
     from transformers import PreTrainedModel, PreTrainedTokenizer
 
-
 __all__ = ["transformers"]
 
 
@@ -16,17 +15,17 @@ class Transformers:
     """Represents a `transformers` model."""
 
     def __init__(
-        self,
-        model: "PreTrainedModel",
-        tokenizer: "PreTrainedTokenizer",
-        device: Optional[str] = None,
+            self,
+            model: "PreTrainedModel",
+            tokenizer: "PreTrainedTokenizer",
+            device: Optional[str] = None,
     ):
         self.device = device if device is not None else "cpu"
-        self.model = model#.to(self.device)
+        self.model = model  # .to(self.device)
         self.tokenizer = tokenizer
 
     def __call__(
-        self, input_ids: torch.LongTensor, attention_mask: torch.LongTensor
+            self, input_ids: torch.LongTensor, attention_mask: torch.LongTensor
     ) -> torch.FloatTensor:
         # `transformers` model accept `input_ids` of size at most equal to 2. We
         # thus reshape the input array, call the model and reshape the output
@@ -37,8 +36,7 @@ class Transformers:
         print(attention_mask)
         print(self.tokenizer.decode(input_ids))
 
-
-        override_prompt=False
+        override_prompt = False
         if override_prompt:
             promptAIRBUS = '''The account_number is 8 digits long.
 
@@ -53,8 +51,10 @@ class Transformers:
                                              1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                                              1]])
 
-            input_ids=torch.concatenate([self.tokenizer.encode(promptAIRBUS)[0], additional_data], axis=-1).to(device='cuda:0')
-            attention_mask = torch.concatenate([self.tokenizer.encode(promptAIRBUS)[1], additional_mask], axis=-1).to(device='cuda:0')
+            input_ids = torch.concatenate([self.tokenizer.encode(promptAIRBUS)[0], additional_data], axis=-1).to(
+                device='cuda:0')
+            attention_mask = torch.concatenate([self.tokenizer.encode(promptAIRBUS)[1], additional_mask], axis=-1).to(
+                device='cuda:0')
 
         batch_shape = input_ids.shape[:-1]
         num_tokens = input_ids.shape[-1]
@@ -74,7 +74,6 @@ class Transformers:
         next_token_logits = output.logits[:, -1, :]
         print('next_token_logits')
         print(next_token_logits)
-
 
         next_token_logits = next_token_logits.reshape(batch_shape + (-1,))
         print('#### END Transformers call')
@@ -102,7 +101,7 @@ class TransformersTokenizer(Tokenizer):
         self.vocabulary = self.tokenizer.get_vocab()
 
     def encode(
-        self, prompt: Union[str, List[str]], **kwargs
+            self, prompt: Union[str, List[str]], **kwargs
     ) -> Tuple[torch.LongTensor, torch.LongTensor]:
         kwargs["padding"] = True
         kwargs["return_tensors"] = "pt"
@@ -114,19 +113,12 @@ class TransformersTokenizer(Tokenizer):
         return text
 
     def convert_token_to_string(self, token: str) -> str:
-        print('#### BEGIN convert_token_to_string')
-        print(token)
-        raw_string = self.tokenizer.convert_tokens_to_string([token])
+        string = self.tokenizer.convert_tokens_to_string([token])
 
-        print(raw_string)
-        '''string = self.tokenizer.convert_tokens_to_string([29570,token,29570])
+        if token.replace('▁', '') == string:
+            return token
 
-        string = string[1:-1]
-        if raw_string!=string:
-            print('#### Token difference')
-            print(raw_string)
-            print(string)'''
-        return raw_string
+        return string
 
 
 def transformers(model_name: str, device: Optional[str] = None, **model_kwargs):
