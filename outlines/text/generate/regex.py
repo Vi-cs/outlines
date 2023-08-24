@@ -138,10 +138,10 @@ class Regex(Continuation):
                     assert last_fsm_state > -1
 
                     sequence = self.model.tokenizer.decode(readable_tokens)
-                    #print('readable_tokens')
-                    #print(self.model.tokenizer.decode(readable_tokens))
-                    #print('sequence')
-                    #print(sequence)
+                    print('readable_tokens')
+                    print(self.model.tokenizer.decode(readable_tokens))
+                    print('sequence')
+                    print(sequence)
 
                     ((_, state_seq),) = find_partial_matches(
                         self.regex_fsm,
@@ -183,13 +183,21 @@ class Regex(Continuation):
         #print('Output : ')
         #print(logits)
         print('##### mask and so on')
+        print('mask')
         print(mask)
-        top_values, top_indices = torch.topk(mask, 10, dim=-1)
+        #top_values, top_indices = torch.topk(mask, 10, dim=-1)
+        #print(top_values)
+        #print(top_indices)
+        print('logits + mask')
+        print(logits + mask)
+        top_values, top_indices = torch.topk(logits + mask, 10, dim=-1)
         print(top_values)
         print(top_indices)
 
         if tokenizer != None:
             print(tokenizer.decode(top_indices))
+
+
 
         #print('shapes')
         #print(logits.shape)
