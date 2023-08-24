@@ -182,22 +182,19 @@ class Regex(Continuation):
 
         #print('Output : ')
         #print(logits)
-        print('##### mask and so on')
-        print('mask')
-        print(mask)
-        #top_values, top_indices = torch.topk(mask, 10, dim=-1)
-        #print(top_values)
-        #print(top_indices)
-        print('logits + mask')
-        print(logits + mask)
-        top_values, top_indices = torch.topk(logits + mask, 10, dim=-1)
+        print('##### WITHOUT MASK')
+        top_values, top_indices = torch.topk(logits, 10, dim=-1)
         print(top_values)
         print(top_indices)
-
         if tokenizer != None:
             print(tokenizer.decode(top_indices))
 
-
+        print('##### WITH MASK')
+        top_values, top_indices = torch.topk(logits + mask, 10, dim=-1)
+        print(top_values)
+        print(top_indices)
+        if tokenizer != None:
+            print(tokenizer.decode(top_indices))
 
         #print('shapes')
         #print(logits.shape)
