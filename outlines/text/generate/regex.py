@@ -83,6 +83,7 @@ class Regex(Continuation):
             )
 
         self.pstate_to_vocab = {k: list(v) for k, v in pstate_to_vocab.items()}
+        print(f'self.pstate_to_vocab: {self.pstate_to_vocab}')
         # These tuples are comprised of the FSM name, last FSM state, and
         # number of processed tokens.
         # When an EOS is observed, the last FSM state becomes `-1`.
@@ -138,10 +139,8 @@ class Regex(Continuation):
                     assert last_fsm_state > -1
 
                     sequence = self.model.tokenizer.decode(readable_tokens)
-                    print('readable_tokens')
-                    print(self.model.tokenizer.decode(readable_tokens))
-                    print('sequence')
-                    print(sequence)
+                    print(f'readable_tokens (without current token): {readable_tokens} - {sequence}')
+
 
                     ((_, state_seq),) = find_partial_matches(
                         self.regex_fsm,
@@ -166,11 +165,13 @@ class Regex(Continuation):
 
         masks = []
         for pstate in self.pstates:
+            print(f'for {pstate} in self.pstates:')
             mask = torch.full(
                 (len(self.model.tokenizer.vocabulary),), -math.inf, device=self.device
             )
 
             if pstate[1] > -1:
+                print(f'next_support = self.pstate_to_vocab[pstate[:2]]: {next_support}')
                 next_support = self.pstate_to_vocab[pstate[:2]]
             else:
                 next_support = [self.model.tokenizer.eos_token_id]
