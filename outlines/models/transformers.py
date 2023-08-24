@@ -114,7 +114,13 @@ class TransformersTokenizer(Tokenizer):
         return text
 
     def convert_token_to_string(self, token: str) -> str:
-        string = self.tokenizer.convert_tokens_to_string([token])
+        print('#### BEGIN convert_token_to_string')
+        print(token)
+
+        string = self.tokenizer.convert_tokens_to_string([29570,token,29570])
+        print(string)
+        string = string[1:-1]
+        print(string)
         return string
 
 
