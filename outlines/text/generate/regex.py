@@ -89,7 +89,7 @@ class Regex(Continuation):
         self.pstates: List[Tuple[str, int, int]] = []
 
     def create_proposal(
-        self, generated_token_ids: torch.LongTensor, logits: torch.DoubleTensor
+        self, generated_token_ids: torch.LongTensor, logits: torch.DoubleTensor, tokenizer: any = None
     ) -> torch.DoubleTensor:
         """Modify the next-token logits so that only integers can be generated.
 
@@ -101,7 +101,7 @@ class Regex(Continuation):
             The next-token logits.
 
         """
-        #print('#### BEGIN create_proposal')
+        print('#### BEGIN create_proposal')
         #print('Input : ')
         #print(generated_token_ids)
         #print(logits)
@@ -182,12 +182,20 @@ class Regex(Continuation):
 
         #print('Output : ')
         #print(logits)
-        #print(mask)
+        print('##### mask and so on')
+        print(mask)
+        top_values, top_indices = torch.topk(mask, 10, dim=-1)
+        print(top_values)
+        print(top_indices)
+
+        if tokenizer != None:
+            print(tokenizer.decode(top_indices))
+
         #print('shapes')
         #print(logits.shape)
         #print(mask.shape)
         #print(torch.nonzero(mask != -float('inf'), as_tuple=True))
-        #print('#### End create_proposal')
+        print('#### End create_proposal')
         return logits + mask
 
 
