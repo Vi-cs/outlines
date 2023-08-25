@@ -171,7 +171,11 @@ class Regex(Continuation):
             )
 
             if pstate[1] > -1:
+
                 next_support = self.pstate_to_vocab[pstate[:2]]
+                print(f'pstate[0]: {pstate[0]}')
+                print(f'pstate[1]: {pstate[1]}')
+                print(f'pstate[:2]: {pstate[:2]}')
                 print(f'next_support = self.pstate_to_vocab[pstate[:2]]: {next_support}')
             else:
                 next_support = [self.model.tokenizer.eos_token_id]

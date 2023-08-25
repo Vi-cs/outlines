@@ -299,9 +299,9 @@ def find_partial_matches(
 
     """
     if verbose:
-        print('#### BEGIN find_partial_matches')
-        print('Input : ')
-        print(fsm)
+        print('#### BEGIN find_partial_matches Input : ')
+        print(f'fsm:too long - input_string:{input_string} - start_state:{start_state}')
+        #print(fsm)
         print(input_string)
         print(start_state)
     if len(input_string) == 0 or input_string[0] not in fsm.alphabet:
@@ -423,15 +423,20 @@ def map_partial_states_to_vocab(
     pstate_to_vocab = defaultdict(set)
     possible_paths = {}
     for symbol_name, fsm in terminals_to_fsms_map.items():
+        print(f'for symbol_name, fsm in terminals_to_fsms_map.items(): symbol_name:{symbol_name} - fsm...')
         terminal_possible_paths = defaultdict(set)
         for i, vocab_string in enumerate(vocabulary):
             if vocab_string == final_state_string:
                 final_state_string_idx = i
-
+            print(f'-- for i, vocab_string in enumerate(vocabulary): i:{i} - vocab_string:{vocab_string}')
             for end_idx, state_seq in find_partial_matches(fsm, vocab_string):
+                print(f'---- for end_idx, state_seq in find_partial_matches(fsm, vocab_string): end_idx:{end_idx} - state_seq:{state_seq}')
+                print(f'---- if partial_match_filter(vocab_string, end_idx, state_seq): {partial_match_filter(vocab_string, end_idx, state_seq)}')
                 if partial_match_filter(vocab_string, end_idx, state_seq):
                     terminal_possible_paths[state_seq[0]].add(state_seq[-1])
+                    print(f'------ terminal_possible_paths[state_seq[0]].add(state_seq[-1]): state_seq[0]:{state_seq[0]} - state_seq[-1]:{state_seq[-1]}')
                     pstate_to_vocab[(symbol_name, state_seq[0])].add(i)
+                    print(f'------ pstate_to_vocab[(symbol_name, state_seq[0])].add(i):')
 
         possible_paths[symbol_name] = terminal_possible_paths
 
