@@ -118,13 +118,13 @@ class TransformersTokenizer(Tokenizer):
 
 
         string = self.tokenizer.convert_tokens_to_string([token])
-        decode = self.tokenizer.decode(torch.tensor([[v]]))
+        #decode = self.tokenizer.decode(torch.tensor([[v]]))
         if token.replace('▁', '') == string:
             return token
 
         #if v == 1104 or v == 29500 or v == 29570 or v == 263 or v == 6568:
         print(f'convert_token_to_string(self, token: str, v: int): token:{token} - v:{v} - string:{string}')
-        print(f'decode: token:{token} - v:{v} - decode:{decode}')
+        print(f'decode: token:{token} - v:{v} - len:{len(v)}')
         return string
 
 
