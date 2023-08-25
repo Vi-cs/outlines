@@ -118,7 +118,7 @@ class TransformersTokenizer(Tokenizer):
 
 
         string = self.tokenizer.convert_tokens_to_string([token])
-        decode = self.tokenizer.decode(int)
+        decode = self.tokenizer.decode(torch.tensor([[v]]))
         if token.replace('▁', '') == string:
             return token
 
