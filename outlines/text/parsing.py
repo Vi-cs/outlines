@@ -423,20 +423,29 @@ def map_partial_states_to_vocab(
     pstate_to_vocab = defaultdict(set)
     possible_paths = {}
     for symbol_name, fsm in terminals_to_fsms_map.items():
-        print(f'for symbol_name, fsm in terminals_to_fsms_map.items(): symbol_name:{symbol_name} - fsm...')
+        #print(f'for symbol_name, fsm in terminals_to_fsms_map.items(): symbol_name:{symbol_name} - fsm...')
         terminal_possible_paths = defaultdict(set)
+        #iterate on vocab string, at index i in the vocab
         for i, vocab_string in enumerate(vocabulary):
             if vocab_string == final_state_string:
                 final_state_string_idx = i
-            print(f'-- for i, vocab_string in enumerate(vocabulary): i:{i} - vocab_string:{vocab_string}')
+            #print(f'-- for i, vocab_string in enumerate(vocabulary): i:{i} - vocab_string:{vocab_string}')
+            '''The first element of each tuple contains either ``None`` or an integer
+            indicating the position in `input_string` at which the FSM terminated.  The
+            second element is the tuple of states visited during execution of the FSM
+            plus the next, unvisited transition state.'''
             for end_idx, state_seq in find_partial_matches(fsm, vocab_string):
-                print(f'---- for end_idx, state_seq in find_partial_matches(fsm, vocab_string): end_idx:{end_idx} - state_seq:{state_seq}')
-                print(f'---- if partial_match_filter(vocab_string, end_idx, state_seq): {partial_match_filter(vocab_string, end_idx, state_seq)}')
+                #print(f'---- for end_idx, state_seq in find_partial_matches(fsm, vocab_string): end_idx:{end_idx} - state_seq:{state_seq}')
+                #print(f'---- if partial_match_filter(vocab_string, end_idx, state_seq): {partial_match_filter(vocab_string, end_idx, state_seq)}')
+                ''' def partial_match_filter(string, end_idx, state_seq):
+                    if end_idx is not None and end_idx < len(string) - 1:
+                        return False
+                    return True'''
                 if partial_match_filter(vocab_string, end_idx, state_seq):
                     terminal_possible_paths[state_seq[0]].add(state_seq[-1])
-                    print(f'------ terminal_possible_paths[state_seq[0]].add(state_seq[-1]): state_seq[0]:{state_seq[0]} - state_seq[-1]:{state_seq[-1]}')
+                    #print(f'------ terminal_possible_paths[state_seq[0]].add(state_seq[-1]): state_seq[0]:{state_seq[0]} - state_seq[-1]:{state_seq[-1]}')
                     pstate_to_vocab[(symbol_name, state_seq[0])].add(i)
-                    print(f'------ pstate_to_vocab[(symbol_name, state_seq[0])].add(i):')
+                    #print(f'------ pstate_to_vocab[(symbol_name, state_seq[0])].add(i):')
 
         possible_paths[symbol_name] = terminal_possible_paths
 
