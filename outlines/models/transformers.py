@@ -113,16 +113,17 @@ class TransformersTokenizer(Tokenizer):
         return text
 
     def convert_token_to_string(self, token: str, v: int) -> str:
-        print(f'convert_token_to_string: token:{token} v:{v}')
+        print(f'convert_token_to_string: token:{token} v:{v} isinstance(v, int):{isinstance(v, int)}')
 
 
 
         string = self.tokenizer.convert_tokens_to_string([token])
         print(f'string:{string}')
+        
         if isinstance(v, int):
-            decoded_values = self.tokenizer.decode(torch.tensor([[v]]))
+            decoded_values = self.tokenizer.decode(torch.tensor([v]))
         else:
-            decoded_values = [self.tokenizer.decode(torch.tensor([[x]])) for x in v]
+            decoded_values = self.tokenizer.decode(torch.tensor([x] for x in v))
 
         if token.replace('▁', '') == string:
             return token
