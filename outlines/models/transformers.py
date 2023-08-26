@@ -113,10 +113,10 @@ class TransformersTokenizer(Tokenizer):
         return text
 
     def convert_token_to_string(self, token: str, v: int) -> str:
-        print(f'convert_token_to_string: token:{token} v:{v} isinstance(v, int):{isinstance(v, int)}')
+        #print(f'convert_token_to_string: token:{token} v:{v} isinstance(v, int):{isinstance(v, int)}')
 
         string = self.tokenizer.convert_tokens_to_string([token])
-        print(f'string:{string}')
+        #print(f'string:{string}')
 
         if token[0] == '▁':
             string = ' ' + string
@@ -128,7 +128,7 @@ class TransformersTokenizer(Tokenizer):
         else:
             decoded_values = self.tokenizer.decode(torch.tensor([x] for x in v))'''
 
-        print(f'modified string:{string}')
+        #print(f'modified string:{string}')
         # if v == 1104 or v == 29500 or v == 29570 or v == 263 or v == 6568:
         # print(f'decoded_values: {decoded_values}')
         return string

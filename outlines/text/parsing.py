@@ -300,10 +300,7 @@ def find_partial_matches(
     """
     if verbose:
         print('#### BEGIN find_partial_matches Input : ')
-        print(f'fsm:too long - input_string:{input_string} - start_state:{start_state}')
-        #print(fsm)
-        print(input_string)
-        print(start_state)
+        print(f'fsm:{fsm} - input_string:{input_string} - start_state:{start_state}')
     if len(input_string) == 0 or input_string[0] not in fsm.alphabet:
         return set()
 
@@ -359,8 +356,10 @@ def find_partial_matches(
         fsm.map if start_state is None else {start_state: fsm.map[start_state]}
     )
     for state, trans in transition_maps.items():
+        print(f'for state, trans in transition_maps.items(): state:{state} - trans:{trans} - transition_maps.items():{transition_maps.items()}')
         if trans_key in trans:
             n_matched, path = _partial_match(trans, verbose)
+            print(f'n_matched:{n_matched} - path:{path}')
             if path is not None:
                 res.add((n_matched, (state,) + path))
     if verbose:
