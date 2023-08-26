@@ -304,7 +304,10 @@ def find_partial_matches(
     if len(input_string) == 0 or input_string[0] not in fsm.alphabet:
         return set()
 
+
     trans_key = fsm.alphabet[input_string[0]]
+    if verbose:
+        print(f'trans_key:{trans_key} - input_string[0]:{input_string[0]} - fsm.alphabet:{fsm.alphabet}')
 
     # TODO: We could probably reuse parts of the computed paths when computing
     # results for multiple starting points.
