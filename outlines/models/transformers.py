@@ -115,21 +115,22 @@ class TransformersTokenizer(Tokenizer):
     def convert_token_to_string(self, token: str, v: int) -> str:
         print(f'convert_token_to_string: token:{token} v:{v} isinstance(v, int):{isinstance(v, int)}')
 
-
-
         string = self.tokenizer.convert_tokens_to_string([token])
         print(f'string:{string}')
-        
-        if isinstance(v, int):
+
+        if token[0] == '▁':
+            string = ' ' + string
+        if token[-1] == '▁':
+            string = string + ' '
+
+        '''if isinstance(v, int):
             decoded_values = self.tokenizer.decode(torch.tensor([v]))
         else:
-            decoded_values = self.tokenizer.decode(torch.tensor([x] for x in v))
+            decoded_values = self.tokenizer.decode(torch.tensor([x] for x in v))'''
 
-        if token.replace('▁', '') == string:
-            return token
-
-        #if v == 1104 or v == 29500 or v == 29570 or v == 263 or v == 6568:
-        print(f'decoded_values: {decoded_values}')
+        print(f'modified string:{string}')
+        # if v == 1104 or v == 29500 or v == 29570 or v == 263 or v == 6568:
+        # print(f'decoded_values: {decoded_values}')
         return string
 
 
