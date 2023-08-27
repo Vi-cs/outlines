@@ -120,7 +120,7 @@ class TransformersTokenizer(Tokenizer):
 
         if token[0] == '▁':
             string = ' ' + string
-        if token[-1] == '▁':
+        if len(token)>1 and token[-1] == '▁':
             string = string + ' '
 
         '''if isinstance(v, int):
