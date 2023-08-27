@@ -428,7 +428,7 @@ def map_partial_states_to_vocab(
     possible_paths = {}
     activate_log = True
     log_index = 0
-    #symbol_name = REGEX
+    # symbol_name = REGEX
     for symbol_name, fsm in terminals_to_fsms_map.items():
         if log_index == 0:
             activate_log = True
@@ -445,8 +445,8 @@ def map_partial_states_to_vocab(
         for i, vocab_string in enumerate(vocabulary):
             if vocab_string == final_state_string:
                 final_state_string_idx = i
-            if vocab_string.__contains__("6") or vocab_string.__contains__("data") or vocab_string.__contains__("6"):
-                activate_log=True
+            if i == 2132 or i == 29500:
+                activate_log = True
             else:
                 activate_log = False
             if activate_log:
