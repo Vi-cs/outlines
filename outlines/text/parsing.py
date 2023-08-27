@@ -445,7 +445,7 @@ def map_partial_states_to_vocab(
         for i, vocab_string in enumerate(vocabulary):
             if vocab_string == final_state_string:
                 final_state_string_idx = i
-            if vocab_string.__contains__("data") or i == 2132 or i == 29500:
+            if i == 2132 or i == 29500:
                 activate_log = True
             else:
                 activate_log = False
@@ -455,7 +455,7 @@ def map_partial_states_to_vocab(
             indicating the position in `input_string` at which the FSM terminated.  The
             second element is the tuple of states visited during execution of the FSM
             plus the next, unvisited transition state.'''
-            for end_idx, state_seq in find_partial_matches(fsm, vocab_string):
+            for end_idx, state_seq in find_partial_matches(fsm, vocab_string, activate_log):
                 if activate_log:
                     print(
                         f'---- for end_idx, state_seq in find_partial_matches(fsm, vocab_string): end_idx:{end_idx} - state_seq:{state_seq}')
