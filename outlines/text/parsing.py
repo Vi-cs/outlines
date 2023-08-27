@@ -357,7 +357,7 @@ def find_partial_matches(
     )
     # we get to the state and ..
     for state, trans in transition_maps.items():
-        if verbose:
+        if verbose and False:
             print(
                 f'for state, trans in transition_maps.items(): state:{state} - trans:{trans} - transition_maps.items():{transition_maps.items()}')
         # if the
