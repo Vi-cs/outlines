@@ -307,7 +307,7 @@ def find_partial_matches(
 
     trans_key = fsm.alphabet[input_string[0]]
     if verbose:
-        print(f'trans_key:{trans_key} - input_string[0]:{input_string[0]} - fsm.alphabet:{fsm.alphabet}')
+        print(f'trans_key:{trans_key} - input_string[0]:{input_string[0]} - fsm.alphabet:too long')
 
     # TODO: We could probably reuse parts of the computed paths when computing
     # results for multiple starting points.
@@ -320,7 +320,7 @@ def find_partial_matches(
 
         if verbose:
             print('#### BEGIN find_partial_matches _partial_match - Input:')
-            print(f'fsm_map:{fsm_map} state:{state} accepted_states:{accepted_states}')
+            print(f'fsm_map:toolong state:{state} accepted_states:{accepted_states}')
 
 
         for i, symbol in enumerate(input_string):
