@@ -444,6 +444,10 @@ def map_partial_states_to_vocab(
         for i, vocab_string in enumerate(vocabulary):
             if vocab_string == final_state_string:
                 final_state_string_idx = i
+            if vocab_string.__contains__("6"):
+                activate_log=True
+            else:
+                activate_log = False
             if activate_log:
                 print(f'-- for i, vocab_string in enumerate(vocabulary): i:{i} - vocab_string:{vocab_string}')
             '''The first element of each tuple contains either ``None`` or an integer
