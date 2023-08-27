@@ -33,7 +33,6 @@ from lark.utils import get_regexp_width
 if TYPE_CHECKING:
     from lark.lexer import LexerThread
 
-
 PartialParseState = Tuple[str, int]
 
 
@@ -207,7 +206,7 @@ def copy_lexer_thread(lexer_thread: "LexerThread") -> "LexerThread":
 
     if getattr(res.lexer, "postlexer", None):
         if isinstance(res.lexer.postlexer, PythonIndenter) and not isinstance(
-            res.lexer.postlexer, PartialPythonIndenter
+                res.lexer.postlexer, PartialPythonIndenter
         ):
             # Patch these methods so that the post lexer keeps its state
             # XXX: This won't really work in generality.
@@ -270,7 +269,7 @@ def parse_to_end(parser_state: ParserState) -> Tuple[ParserState, Set[str]]:
 
 
 def find_partial_matches(
-    fsm: FSM, input_string: str, start_state: Optional[int] = None, verbose: bool=False
+        fsm: FSM, input_string: str, start_state: Optional[int] = None, verbose: bool = False
 ) -> Set[Tuple[Optional[int], Tuple[int, ...]]]:
     """Find the states in the finite state machine `fsm` that accept `input_string`.
 
@@ -304,7 +303,6 @@ def find_partial_matches(
     if len(input_string) == 0 or input_string[0] not in fsm.alphabet:
         return set()
 
-
     trans_key = fsm.alphabet[input_string[0]]
     if verbose:
         print(f'trans_key:{trans_key} - input_string[0]:{input_string[0]} - fsm.alphabet:too long')
@@ -312,7 +310,7 @@ def find_partial_matches(
     # TODO: We could probably reuse parts of the computed paths when computing
     # results for multiple starting points.
     def _partial_match(
-        trans: Dict[int, int], verbose: bool=False
+            trans: Dict[int, int], verbose: bool = False
     ) -> Tuple[Optional[int], Optional[Tuple[int, ...]]]:
         fsm_map = ChainMap({fsm.initial: trans}, fsm.map)
         state = fsm.initial
@@ -322,7 +320,6 @@ def find_partial_matches(
             print('#### BEGIN find_partial_matches _partial_match - Input:')
             print(f'fsm_map:toolong state:{state} accepted_states:{accepted_states}')
 
-
         for i, symbol in enumerate(input_string):
             if verbose:
                 print(f'for {i}, {symbol} in enumerate({input_string}):')
@@ -331,7 +328,7 @@ def find_partial_matches(
             if anything_else in fsm.alphabet and symbol not in fsm.alphabet:
                 symbol = anything_else
 
-            #understand how this part of code works : it seems that a blank space inut is not match with a token begining with a blank space
+            # understand how this part of code works : it seems that a blank space inut is not match with a token begining with a blank space
             trans_key = fsm.alphabet[symbol]
             if verbose:
                 print(f'trans_key = fsm.alphabet[symbol]:{trans_key}')
@@ -358,11 +355,12 @@ def find_partial_matches(
     transition_maps = (
         fsm.map if start_state is None else {start_state: fsm.map[start_state]}
     )
-    #we get to the state and ..
+    # we get to the state and ..
     for state, trans in transition_maps.items():
         if verbose:
-            print(f'for state, trans in transition_maps.items(): state:{state} - trans:{trans} - transition_maps.items():{transition_maps.items()}')
-        #if the
+            print(
+                f'for state, trans in transition_maps.items(): state:{state} - trans:{trans} - transition_maps.items():{transition_maps.items()}')
+        # if the
         if trans_key in trans:
             n_matched, path = _partial_match(trans, verbose)
             if verbose:
@@ -394,12 +392,12 @@ def terminals_to_fsms(lp: Lark) -> Dict[str, FSM]:
 
 
 def map_partial_states_to_vocab(
-    vocabulary: Iterable[str],
-    terminals_to_fsms_map: Dict[str, FSM],
-    partial_match_filter: Callable[
-        [str, Optional[int], Tuple[int, ...]], bool
-    ] = lambda *args: True,
-    final_state_string: Optional[str] = None,
+        vocabulary: Iterable[str],
+        terminals_to_fsms_map: Dict[str, FSM],
+        partial_match_filter: Callable[
+            [str, Optional[int], Tuple[int, ...]], bool
+        ] = lambda *args: True,
+        final_state_string: Optional[str] = None,
 ) -> Tuple[
     DefaultDict[PartialParseState, Set[int]], Dict[str, DefaultDict[int, Set[int]]]
 ]:
@@ -428,18 +426,21 @@ def map_partial_states_to_vocab(
     # Partial parse states to the subsets of the vocabulary that accept them
     pstate_to_vocab = defaultdict(set)
     possible_paths = {}
-    activate_log=True
-    log_index=0
+    activate_log = True
+    log_index = 0
     for symbol_name, fsm in terminals_to_fsms_map.items():
-        if symbol_name=="6":
-            activate_log=True
+        if log_index == 0:
+            activate_log = True
         else:
-            activate_log=False
-        log_index=log_index+1
+            activate_log = False
+        log_index = log_index + 1
         if activate_log:
-            print(f'for symbol_name, fsm in terminals_to_fsms_map.items(): symbol_name:{symbol_name} - fsm...')
+            print(f'for symbol_name, fsm in terminals_to_fsms_map.items(): symbol_name:{symbol_name} - fsm:{fsm}')
+            print(
+                f'for symbol_name, fsm in terminals_to_fsms_map.items(): terminals_to_fsms_map:{terminals_to_fsms_map}')
+
         terminal_possible_paths = defaultdict(set)
-        #iterate on vocab string, at index i in the vocab
+        # iterate on vocab string, at index i in the vocab
         for i, vocab_string in enumerate(vocabulary):
             if vocab_string == final_state_string:
                 final_state_string_idx = i
@@ -451,8 +452,10 @@ def map_partial_states_to_vocab(
             plus the next, unvisited transition state.'''
             for end_idx, state_seq in find_partial_matches(fsm, vocab_string):
                 if activate_log:
-                    print(f'---- for end_idx, state_seq in find_partial_matches(fsm, vocab_string): end_idx:{end_idx} - state_seq:{state_seq}')
-                    print(f'---- if partial_match_filter(vocab_string, end_idx, state_seq): {partial_match_filter(vocab_string, end_idx, state_seq)}')
+                    print(
+                        f'---- for end_idx, state_seq in find_partial_matches(fsm, vocab_string): end_idx:{end_idx} - state_seq:{state_seq}')
+                    print(
+                        f'---- if partial_match_filter(vocab_string, end_idx, state_seq): {partial_match_filter(vocab_string, end_idx, state_seq)}')
                 ''' def partial_match_filter(string, end_idx, state_seq):
                     if end_idx is not None and end_idx < len(string) - 1:
                         return False
@@ -460,7 +463,8 @@ def map_partial_states_to_vocab(
                 if partial_match_filter(vocab_string, end_idx, state_seq):
                     terminal_possible_paths[state_seq[0]].add(state_seq[-1])
                     if activate_log:
-                        print(f'------ terminal_possible_paths[state_seq[0]].add(state_seq[-1]): state_seq[0]:{state_seq[0]} - state_seq[-1]:{state_seq[-1]}')
+                        print(
+                            f'------ terminal_possible_paths[state_seq[0]].add(state_seq[-1]): state_seq[0]:{state_seq[0]} - state_seq[-1]:{state_seq[-1]}')
                     pstate_to_vocab[(symbol_name, state_seq[0])].add(i)
                     if activate_log:
                         print(f'------ pstate_to_vocab[(symbol_name, state_seq[0])].add(i):')
@@ -472,9 +476,9 @@ def map_partial_states_to_vocab(
         for symbol_name, fsm in terminals_to_fsms_map.items():
             for state in fsm.finals:
                 pstate_to_vocab[(symbol_name, state)].add(final_state_string_idx)
-    #print('Output : ')
-    #print(pstate_to_vocab)
-    #print(possible_paths)
+    # print('Output : ')
+    # print(pstate_to_vocab)
+    # print(possible_paths)
 
     print('#### END map_partial_states_to_vocab. Output:')
     print(f'pstate_to_vocab:{pstate_to_vocab}, possible_paths:{possible_paths}')
@@ -494,11 +498,11 @@ def terminals_to_lalr_states(lp: Lark) -> DefaultDict[str, Set[int]]:
 
 
 def create_pmatch_parser_states(
-    lp: Lark,
-    terminals_to_states: Dict[str, Set[int]],
-    term_type: str,
-    ptoken: str,
-    pmatch: Tuple[int, Tuple[int, ...]],
+        lp: Lark,
+        terminals_to_states: Dict[str, Set[int]],
+        term_type: str,
+        ptoken: str,
+        pmatch: Tuple[int, Tuple[int, ...]],
 ) -> Tuple[ParserState, ...]:
     parse_table = lp.parser.parser.parser.parse_table
 
