@@ -139,12 +139,14 @@ class Regex(Continuation):
                     assert last_fsm_state > -1
 
                     sequence = self.model.tokenizer.decode(readable_tokens)
+                    if len(sequence)>1:
+                        print(f'############################################# len(sequence)>1: sequence:{sequence}')
                     print(f'readable_tokens (without current token): {readable_tokens} - {sequence}')
                     sequence_corrected = None
                     token_corrected=None
                     for tok, i in self.model.tokenizer.vocabulary.items():
                         if i == readable_tokens.item() :
-                            sequence_corrected = self.model.tokenizer.convert_token_to_string(tok, i)
+                            sequence_corrected = [self.model.tokenizer.convert_token_to_string(tok, i)]
                             token_corrected=tok
 
                     print(f'readable_tokens corrected (without current token): {token_corrected} - {sequence_corrected}')
