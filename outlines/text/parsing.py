@@ -431,7 +431,7 @@ def map_partial_states_to_vocab(
     activate_log=True
     log_index=0
     for symbol_name, fsm in terminals_to_fsms_map.items():
-        if log_index==0:
+        if symbol_name=="6":
             activate_log=True
         else:
             activate_log=False
