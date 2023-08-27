@@ -121,8 +121,8 @@ class Regex(Continuation):
                 generated_token_ids,
                 self.pstates,
             ):
-                print(f'for token_seq, (_, last_fsm_state, last_token_idx) in zip(generated_token_ids,self.pstates,): token_seq:{token_seq}, last_fsm_state:{last_fsm_state} ')
-
+                print(f'for token_seq, (_, last_fsm_state, last_token_idx) in zip(generated_token_ids,self.pstates,): token_seq:{token_seq}, last_fsm_state:{last_fsm_state}, last_token_idx:{last_token_idx}')
+                print(f'generated_token_ids:{generated_token_ids}, self.pstates:{self.pstates}')
                 # Get the tokens we haven't already processed
                 readable_tokens = token_seq[last_token_idx:]
                 print(f'readable_tokens:{readable_tokens}')
