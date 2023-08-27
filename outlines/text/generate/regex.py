@@ -140,7 +140,8 @@ class Regex(Continuation):
 
                     sequence = self.model.tokenizer.decode(readable_tokens)
                     print(f'readable_tokens (without current token): {readable_tokens} - {sequence}')
-
+                    sequence = self.model.tokenizer.convert_token_to_string(sequence,readable_tokens.item())
+                    print(f'readable_tokens corrected (without current token): {readable_tokens} - {sequence}')
 
                     ((_, state_seq),) = find_partial_matches(
                         self.regex_fsm,
