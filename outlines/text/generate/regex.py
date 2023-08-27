@@ -114,25 +114,25 @@ class Regex(Continuation):
                 ("REGEX", self.regex_fsm.initial, 0)
                 for _ in range(generated_token_ids.shape[0])
             ]
-
+        print(f'self.pstates:{self.pstates}')
         if generated_token_ids.shape[-1] > 0:
             new_pstates = []
             for token_seq, (_, last_fsm_state, last_token_idx) in zip(
                 generated_token_ids,
                 self.pstates,
             ):
-                #print('token_seq')
-                #print(token_seq)
+                print(f'for token_seq, (_, last_fsm_state, last_token_idx) in zip(generated_token_ids,self.pstates,): token_seq:{token_seq}, last_fsm_state:{last_fsm_state} ')
 
                 # Get the tokens we haven't already processed
                 readable_tokens = token_seq[last_token_idx:]
-                #print('readable_tokens_raw')
+                print(f'readable_tokens:{readable_tokens}')
                 #print(readable_tokens)
                 # excluding any EOS tokens
                 not_eos_mask = [
                     tk != self.model.tokenizer.eos_token_id for tk in readable_tokens
                 ]
                 readable_tokens = readable_tokens[not_eos_mask]
+                print(f'readable_tokens[not_eos_mask]:{readable_tokens[not_eos_mask]}')
                 if len(readable_tokens) > 0:
                     # If we previously ended with an EOS, we shouldn't be
                     # getting/sampling any more non-EOS tokens
@@ -169,6 +169,7 @@ class Regex(Continuation):
                 #print(pstate)
 
                 new_pstates.append(pstate)
+                print(f'new_pstates.append(pstate): pstate:{pstate}')
 
             self.pstates = new_pstates
 

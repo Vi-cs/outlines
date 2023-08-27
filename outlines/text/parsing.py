@@ -358,9 +358,11 @@ def find_partial_matches(
     transition_maps = (
         fsm.map if start_state is None else {start_state: fsm.map[start_state]}
     )
+    #we get to the state and ..
     for state, trans in transition_maps.items():
         if verbose:
             print(f'for state, trans in transition_maps.items(): state:{state} - trans:{trans} - transition_maps.items():{transition_maps.items()}')
+        #if the
         if trans_key in trans:
             n_matched, path = _partial_match(trans, verbose)
             if verbose:
