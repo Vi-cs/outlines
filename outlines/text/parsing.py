@@ -445,7 +445,7 @@ def map_partial_states_to_vocab(
         for i, vocab_string in enumerate(vocabulary):
             if vocab_string == final_state_string:
                 final_state_string_idx = i
-            if i == 2132 or i == 29500:
+            if vocab_string.__contains__("data") or i == 2132 or i == 29500:
                 activate_log = True
             else:
                 activate_log = False
