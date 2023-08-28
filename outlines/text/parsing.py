@@ -364,7 +364,7 @@ def find_partial_matches(
                 f'for state, trans in transition_maps.items(): state:{state} - trans:{trans} - transition_maps.items():{transition_maps.items()}')
         # if the
         if trans_key in trans:
-            n_matched, path = _partial_match(trans, verbose)
+            n_matched, path = _partial_match(trans)
             if Params.verbose:
                 print(f'n_matched:{n_matched} - path:{path}')
             if path is not None:
