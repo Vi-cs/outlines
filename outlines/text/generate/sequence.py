@@ -95,7 +95,7 @@ class Sequence:
 
         print(f'Tokens: {token_ids[:, num_prompt_tokens:]}')
         print(f'Output: {self.model.tokenizer.decode(token_ids[:, num_prompt_tokens:])}')
-        
+
         probs = self.create_proposal(token_ids[:, num_prompt_tokens:], probs, self.model.tokenizer)
         probs = torch.nn.functional.softmax(probs, dim=-1)
         # print('torch.nn.functional.softmax(probs, dim=-1)')
