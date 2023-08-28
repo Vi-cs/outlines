@@ -30,6 +30,8 @@ from lark.parsers.lalr_interactive_parser import InteractiveParser
 from lark.parsers.lalr_parser import ParseConf, ParserState
 from lark.utils import get_regexp_width
 
+from outlines.params import Params
+
 if TYPE_CHECKING:
     from lark.lexer import LexerThread
 
@@ -269,7 +271,7 @@ def parse_to_end(parser_state: ParserState) -> Tuple[ParserState, Set[str]]:
 
 
 def find_partial_matches(
-        fsm: FSM, input_string: str, start_state: Optional[int] = None, verbose: bool = False
+        fsm: FSM, input_string: str, start_state: Optional[int] = None
 ) -> Set[Tuple[Optional[int], Tuple[int, ...]]]:
     """Find the states in the finite state machine `fsm` that accept `input_string`.
 
@@ -297,31 +299,31 @@ def find_partial_matches(
     plus the next, unvisited transition state.
 
     """
-    if verbose:
+    if Params.verbose:
         print('#### BEGIN find_partial_matches Input : ')
         print(f'fsm:{fsm} - input_string:{input_string} - len(input_string):{len(input_string)} - start_state:{start_state}')
     if len(input_string) == 0 or input_string[0] not in fsm.alphabet:
         return set()
 
     trans_key = fsm.alphabet[input_string[0]]
-    if verbose:
+    if Params.verbose:
         print(f'trans_key:{trans_key} - input_string[0]:{input_string[0]} - fsm.alphabet:too long')
 
     # TODO: We could probably reuse parts of the computed paths when computing
     # results for multiple starting points.
     def _partial_match(
-            trans: Dict[int, int], verbose: bool = False
+            trans: Dict[int, int]
     ) -> Tuple[Optional[int], Optional[Tuple[int, ...]]]:
         fsm_map = ChainMap({fsm.initial: trans}, fsm.map)
         state = fsm.initial
         accepted_states: Tuple[int, ...] = ()
 
-        if verbose:
+        if Params.verbose:
             print('#### BEGIN find_partial_matches _partial_match - Input:')
             print(f'fsm_map:toolong state:{state} accepted_states:{accepted_states}')
 
         for i, symbol in enumerate(input_string):
-            if verbose:
+            if Params.verbose:
                 print(f'for {i}, {symbol} in enumerate({input_string}):')
 
                 print(f'if {anything_else} in fsm.alphabet and {symbol} not in fsm.alphabet:')
@@ -330,7 +332,7 @@ def find_partial_matches(
 
             # understand how this part of code works : it seems that a blank space inut is not match with a token begining with a blank space
             trans_key = fsm.alphabet[symbol]
-            if verbose:
+            if Params.verbose:
                 print(f'trans_key = fsm.alphabet[symbol]:{trans_key}')
 
             if not (state in fsm_map and trans_key in fsm_map[state]):
@@ -340,7 +342,7 @@ def find_partial_matches(
                 return None, None
 
             state = fsm_map[state][trans_key]
-            if verbose:
+            if Params.verbose:
                 print(f'state = fsm_map[state][trans_key]:{state}')
 
             accepted_states += (state,)
@@ -357,17 +359,17 @@ def find_partial_matches(
     )
     # we get to the state and ..
     for state, trans in transition_maps.items():
-        if verbose and False:
+        if Params.verbose:
             print(
                 f'for state, trans in transition_maps.items(): state:{state} - trans:{trans} - transition_maps.items():{transition_maps.items()}')
         # if the
         if trans_key in trans:
             n_matched, path = _partial_match(trans, verbose)
-            if verbose:
+            if Params.verbose:
                 print(f'n_matched:{n_matched} - path:{path}')
             if path is not None:
                 res.add((n_matched, (state,) + path))
-    if verbose:
+    if Params.verbose:
         print('Output : ')
         print(res)
         print('#### END find_partial_matches')
@@ -435,7 +437,7 @@ def map_partial_states_to_vocab(
         else:
             activate_log = False
         log_index = log_index + 1
-        if activate_log:
+        if Params.verbose and activate_log:
             print(f'for symbol_name, fsm in terminals_to_fsms_map.items(): symbol_name:{symbol_name} - fsm:{fsm}')
             print(
                 f'for symbol_name, fsm in terminals_to_fsms_map.items(): terminals_to_fsms_map:{terminals_to_fsms_map}')
@@ -449,14 +451,14 @@ def map_partial_states_to_vocab(
                 activate_log = True
             else:
                 activate_log = False
-            if activate_log:
+            if Params.verbose and activate_log:
                 print(f'-- for i, vocab_string in enumerate(vocabulary): i:{i} - vocab_string:{vocab_string} - len(vocab_string):{len(vocab_string)}')
             '''The first element of each tuple contains either ``None`` or an integer
             indicating the position in `input_string` at which the FSM terminated.  The
             second element is the tuple of states visited during execution of the FSM
             plus the next, unvisited transition state.'''
             for end_idx, state_seq in find_partial_matches(fsm, vocab_string, verbose=activate_log):
-                if activate_log:
+                if Params.verbose and activate_log:
                     print(
                         f'---- for end_idx, state_seq in find_partial_matches(fsm, vocab_string): end_idx:{end_idx} - state_seq:{state_seq}')
                     print(
@@ -467,11 +469,11 @@ def map_partial_states_to_vocab(
                     return True'''
                 if partial_match_filter(vocab_string, end_idx, state_seq):
                     terminal_possible_paths[state_seq[0]].add(state_seq[-1])
-                    if activate_log:
+                    if Params.verbose and activate_log:
                         print(
                             f'------ terminal_possible_paths[state_seq[0]].add(state_seq[-1]): state_seq[0]:{state_seq[0]} - state_seq[-1]:{state_seq[-1]}')
                     pstate_to_vocab[(symbol_name, state_seq[0])].add(i)
-                    if activate_log:
+                    if Params.verbose and activate_log:
                         print(f'------ pstate_to_vocab[(symbol_name, state_seq[0])].add(i):')
 
         possible_paths[symbol_name] = terminal_possible_paths
@@ -485,8 +487,9 @@ def map_partial_states_to_vocab(
     # print(pstate_to_vocab)
     # print(possible_paths)
 
-    print('#### END map_partial_states_to_vocab. Output:')
-    print(f'pstate_to_vocab:{pstate_to_vocab}, possible_paths:{possible_paths}')
+    if Params.verbose:
+        print('#### END map_partial_states_to_vocab. Output:')
+        print(f'pstate_to_vocab:{pstate_to_vocab}, possible_paths:{possible_paths}')
     return pstate_to_vocab, possible_paths
 
 
