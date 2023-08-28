@@ -22,13 +22,13 @@ def cosine_similarity(
         The number of closest matches to return.
 
     """
-    print('#### BEGIN cosine_similarity')
-    print('Input : ')
-    print(Sequence[np.ndarray])
-    print(np.ndarray)
+    #print('#### BEGIN cosine_similarity')
+    #print('Input : ')
+    #print(Sequence[np.ndarray])
+    #print(np.ndarray)
     similarities = [spatial.distance.cosine(v, query) for v in vectors]
     top_n_indices = np.argsort(similarities)[:k]
-    print('Ouput : ')
-    print(top_n_indices)
-    print('#### END cosine_similarity')
+    ##print('Ouput : ')
+    #print(top_n_indices)
+    #print('#### END cosine_similarity')
     return top_n_indices

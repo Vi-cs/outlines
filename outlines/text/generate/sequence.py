@@ -1,7 +1,7 @@
 from typing import List, Optional, Tuple, Union
 
 import torch
-
+from outlines.params import Params
 
 class Sequence:
     """Represents a sequence generation method."""
@@ -77,19 +77,21 @@ class Sequence:
         `(samples,) + batch_shape`.
 
         """
-        print('######################### BEGIN step')
-        # print('Input : ')
-        # print(str(num_prompt_tokens))
-        # print(str(token_ids))
-        # print(attention_mask)
+        if Params.verbose:
+            print('######################### BEGIN step')
+            # print('Input : ')
+            # print(str(num_prompt_tokens))
+            # print(str(token_ids))
+            # print(attention_mask)
 
         num_input_dims = token_ids.ndim
 
         probs = self.model(token_ids, attention_mask)
-        print('token_ids[:, num_prompt_tokens:]')
-        print(token_ids[:, num_prompt_tokens:])
-        print('decoded token_ids[:, num_prompt_tokens:]')
-        print(self.model.tokenizer.decode(token_ids[:, num_prompt_tokens:]))
+        if Params.verbose:
+            print('token_ids[:, num_prompt_tokens:]')
+            print(token_ids[:, num_prompt_tokens:])
+            print('decoded token_ids[:, num_prompt_tokens:]')
+            print(self.model.tokenizer.decode(token_ids[:, num_prompt_tokens:]))
         probs = self.create_proposal(token_ids[:, num_prompt_tokens:], probs, self.model.tokenizer)
         probs = torch.nn.functional.softmax(probs, dim=-1)
         # print('torch.nn.functional.softmax(probs, dim=-1)')
@@ -239,7 +241,8 @@ class Sequence:
             is_finished = torch.zeros(batch_shape, dtype=torch.bool, device=self.device)
 
         while True:
-            print('###### sequence.__call__()')
+            if Params.verbose:
+                print('###### sequence.__call__()')
             num_generated_tokens = token_ids.shape[-1] - num_prompt_tokens
             if torch.all(is_finished) or num_generated_tokens == self.max_tokens:
                 break
@@ -256,14 +259,15 @@ class Sequence:
                 updated_token_ids[:, num_prompt_tokens:]
             ).flatten()
 
-            print('CALL decode : ')
-            print(self.model.tokenizer.decode(token_ids[..., num_prompt_tokens:]))
-            print(token_ids[..., num_prompt_tokens:])
-            # print('CALL decode : ')
-            # print(str(result_temp))
-            # result_temp = self.postprocess_completions(result_temp)
-            # print('CALL postprocess_completions : ')
-            # print(str(result_temp))
+            if Params.verbose:
+                print('CALL decode : ')
+                print(self.model.tokenizer.decode(token_ids[..., num_prompt_tokens:]))
+                print(token_ids[..., num_prompt_tokens:])
+                # print('CALL decode : ')
+                # print(str(result_temp))
+                # result_temp = self.postprocess_completions(result_temp)
+                # print('CALL postprocess_completions : ')
+                # print(str(result_temp))
 
         result = self.model.tokenizer.decode(token_ids[..., num_prompt_tokens:])
         result = self.postprocess_completions(result)
@@ -306,34 +310,39 @@ def vectorized_random_choice(
 
     """
     cumsum = torch.unsqueeze(p.cumsum(axis=-1), 0)
-    print('vectorized_random_choice - cumsum')
-    print(cumsum)
+    if Params.verbose:
+        print('vectorized_random_choice - cumsum')
+        print(cumsum)
     rand = torch.rand(
         (samples,) + p.shape[:-1] + (1,), generator=rng, device=rng.device
     )
-    print('vectorized_random_choice - rand')
-    print(rand)
+    if Params.verbose:
+        print('vectorized_random_choice - rand')
+        print(rand)
     idx = (cumsum < rand).sum(axis=-1)
-    print('vectorized_random_choice - idx')
-    print(idx)
+    if Params.verbose:
+        print('vectorized_random_choice - idx')
+        print(idx)
 
     # return idx
     # Use torch.argmax to find the index of the maximum probability along the last axis.
     max_indices = torch.argmax(p, dim=-1)
     max_indices = torch.unsqueeze(max_indices, dim=0)
-    print('vectorized_random_choice - max_indices')
-    print(max_indices)
+    if Params.verbose:
+        print('vectorized_random_choice - max_indices')
+        print(max_indices)
 
-    if max_indices != idx:
-        print('DIFF TOKEN')
+        if max_indices != idx:
+            print('DIFF TOKEN')
 
     top_values, top_indices = torch.topk(p, 10, dim=-1)
-    print(top_values)
-    print(top_indices)
+    if Params.verbose:
+        print(top_values)
+        print(top_indices)
 
-    if tokenizer != None:
-        print(tokenizer.decode(max_indices))
-        print(tokenizer.decode(idx))
-        print(tokenizer.decode(top_indices))
+        if tokenizer != None:
+            print(tokenizer.decode(max_indices))
+            print(tokenizer.decode(idx))
+            print(tokenizer.decode(top_indices))
 
     return max_indices

@@ -12,6 +12,7 @@ from pydantic import BaseModel
 from outlines.text.generate.continuation import Continuation
 from outlines.text.json_schema import build_regex_from_schema
 from outlines.text.parsing import find_partial_matches, map_partial_states_to_vocab
+from outlines.params import Params
 
 
 class Regex(Continuation):
@@ -30,10 +31,9 @@ class Regex(Continuation):
     def __init__(self, model, regex_string: str, max_tokens: Optional[int]):
         super().__init__(model, max_tokens)
 
-        #print('#### BEGIN Regex init')
-        #print('Input : ')
-        #print(regex_string)
-        #print(max_tokens)
+        if Params.verbose:
+            print('#### BEGIN Regex init - Input :  ')
+            print(f'regex_string:{regex_string} - max_tokens:{max_tokens}')
         vocabulary = model.tokenizer.vocabulary
         sorted_vocabulary = [
             model.tokenizer.convert_token_to_string(k, v)
@@ -48,8 +48,14 @@ class Regex(Continuation):
                 return False
             return True
 
+        pstate_to_vocab, paths = map_partial_states_to_vocab(
+            list(sorted_vocabulary),
+            {"REGEX": self.regex_fsm},
+            partial_match_filter,
+            final_state_string=model.tokenizer.eos_token,
+        )
 
-        if os.path.exists('/content/pstate_to_vocab.pkl') and os.path.exists('/content/paths.pkl'):
+        '''if os.path.exists('/content/pstate_to_vocab.pkl') and os.path.exists('/content/paths.pkl'):
             with open("/content/pstate_to_vocab.pkl", "rb") as pickle_file:
                 pstate_to_vocab = pickle.load(pickle_file)
             with open("/content/paths.pkl", "rb") as pickle_file:
@@ -64,7 +70,7 @@ class Regex(Continuation):
             with open("/content/pstate_to_vocab.pkl", "wb") as pickle_file:
                 pickle.dump(pstate_to_vocab, pickle_file)
             with open("/content/paths.pkl", "wb") as pickle_file:
-                pickle.dump(paths, pickle_file)
+                pickle.dump(paths, pickle_file)'''
 
         # Check whether a terminal path (from the initial state of the FSM to
         # one of its terminal states) exists, raise an exception otherwise.
@@ -83,7 +89,8 @@ class Regex(Continuation):
             )
 
         self.pstate_to_vocab = {k: list(v) for k, v in pstate_to_vocab.items()}
-        print(f'self.pstate_to_vocab: {self.pstate_to_vocab}')
+        if Params.verbose:
+            print(f'self.pstate_to_vocab: {self.pstate_to_vocab}')
         # These tuples are comprised of the FSM name, last FSM state, and
         # number of processed tokens.
         # When an EOS is observed, the last FSM state becomes `-1`.
@@ -102,46 +109,52 @@ class Regex(Continuation):
             The next-token logits.
 
         """
-        print('#### BEGIN create_proposal')
-        #print('Input : ')
-        #print(generated_token_ids)
-        #print(logits)
-        #print('shapes')
-        #print(generated_token_ids.shape)
-        #print(logits.shape)
+        if Params.verbose:
+            print('#### BEGIN create_proposal')
+            #print('Input : ')
+            #print(generated_token_ids)
+            #print(logits)
+            #print('shapes')
+            #print(generated_token_ids.shape)
+            #print(logits.shape)
         if len(self.pstates) == 0:
             self.pstates = [
                 ("REGEX", self.regex_fsm.initial, 0)
                 for _ in range(generated_token_ids.shape[0])
             ]
-        print(f'self.pstates:{self.pstates}')
+        if Params.verbose:
+            print(f'self.pstates:{self.pstates}')
         if generated_token_ids.shape[-1] > 0:
             new_pstates = []
             for token_seq, (_, last_fsm_state, last_token_idx) in zip(
                 generated_token_ids,
                 self.pstates,
             ):
-                print(f'for token_seq, (_, last_fsm_state, last_token_idx) in zip(generated_token_ids,self.pstates,): token_seq:{token_seq}, last_fsm_state:{last_fsm_state}, last_token_idx:{last_token_idx}')
-                print(f'generated_token_ids:{generated_token_ids}, self.pstates:{self.pstates}')
+                if Params.verbose:
+                    print(f'for token_seq, (_, last_fsm_state, last_token_idx) in zip(generated_token_ids,self.pstates,): token_seq:{token_seq}, last_fsm_state:{last_fsm_state}, last_token_idx:{last_token_idx}')
+                    print(f'generated_token_ids:{generated_token_ids}, self.pstates:{self.pstates}')
                 # Get the tokens we haven't already processed
                 readable_tokens = token_seq[last_token_idx:]
-                print(f'readable_tokens:{readable_tokens}')
-                #print(readable_tokens)
+                if Params.verbose:
+                    print(f'readable_tokens:{readable_tokens}')
+                    #print(readable_tokens)
                 # excluding any EOS tokens
                 not_eos_mask = [
                     tk != self.model.tokenizer.eos_token_id for tk in readable_tokens
                 ]
                 readable_tokens = readable_tokens[not_eos_mask]
-                print(f'readable_tokens[not_eos_mask]:{readable_tokens[not_eos_mask]}')
+                if Params.verbose:
+                    print(f'readable_tokens[not_eos_mask]:{readable_tokens[not_eos_mask]}')
                 if len(readable_tokens) > 0:
                     # If we previously ended with an EOS, we shouldn't be
                     # getting/sampling any more non-EOS tokens
                     assert last_fsm_state > -1
 
                     sequence = self.model.tokenizer.decode(readable_tokens)
-                    if len(sequence)>1:
-                        print(f'############################################# len(sequence)>1: sequence:{sequence}')
-                    print(f'readable_tokens (without current token): {readable_tokens} - {sequence}')
+                    if Params.verbose:
+                        if len(sequence)>1:
+                            print(f'############################################# len(sequence)>1: sequence:{sequence}')
+                        print(f'readable_tokens (without current token): {readable_tokens} - {sequence}')
                     sequence_corrected = None
                     token_corrected=None
                     for tok, i in self.model.tokenizer.vocabulary.items():
@@ -149,15 +162,14 @@ class Regex(Continuation):
                             sequence_corrected = [self.model.tokenizer.convert_token_to_string(tok, i)]
                             token_corrected=tok
 
-                    print(f'readable_tokens corrected (without current token): {token_corrected} - {sequence_corrected}')
+                    if Params.verbose:
+                        print(f'readable_tokens corrected (without current token): {token_corrected} - {sequence_corrected}')
                     sequence=sequence_corrected
-                    token=token_corrected
 
                     ((_, state_seq),) = find_partial_matches(
                         self.regex_fsm,
                         "".join(sequence),
-                        start_state=last_fsm_state,
-                        verbose=True
+                        start_state=last_fsm_state
                     )
                     pstate = (
                         "REGEX",
@@ -171,13 +183,15 @@ class Regex(Continuation):
                 #print(pstate)
 
                 new_pstates.append(pstate)
-                print(f'new_pstates.append(pstate): pstate:{pstate}')
+                if Params.verbose:
+                    print(f'new_pstates.append(pstate): pstate:{pstate}')
 
             self.pstates = new_pstates
 
         masks = []
         for pstate in self.pstates:
-            print(f'for {pstate} in self.pstates:')
+            if Params.verbose:
+                print(f'for {pstate} in self.pstates:')
             mask = torch.full(
                 (len(self.model.tokenizer.vocabulary),), -math.inf, device=self.device
             )
@@ -185,10 +199,11 @@ class Regex(Continuation):
             if pstate[1] > -1:
 
                 next_support = self.pstate_to_vocab[pstate[:2]]
-                print(f'pstate[0]: {pstate[0]}')
-                print(f'pstate[1]: {pstate[1]}')
-                print(f'pstate[:2]: {pstate[:2]}')
-                print(f'next_support = self.pstate_to_vocab[pstate[:2]]: {next_support}')
+                if Params.verbose:
+                    print(f'pstate[0]: {pstate[0]}')
+                    print(f'pstate[1]: {pstate[1]}')
+                    print(f'pstate[:2]: {pstate[:2]}')
+                    print(f'next_support = self.pstate_to_vocab[pstate[:2]]: {next_support}')
             else:
                 next_support = [self.model.tokenizer.eos_token_id]
 
@@ -199,25 +214,28 @@ class Regex(Continuation):
 
         #print('Output : ')
         #print(logits)
-        print('##### WITHOUT MASK')
+        if Params.verbose:
+            print('##### WITHOUT MASK')
         top_values, top_indices = torch.topk(logits, 10, dim=-1)
-        print(top_values)
-        print(top_indices)
-        if tokenizer != None:
-            print(tokenizer.decode(top_indices))
+        if Params.verbose:
+            print(top_values)
+            print(top_indices)
+            if tokenizer != None:
+                print(tokenizer.decode(top_indices))
 
-        print('##### WITH MASK')
+            print('##### WITH MASK')
         top_values, top_indices = torch.topk(logits + mask, 10, dim=-1)
-        print(top_values)
-        print(top_indices)
-        if tokenizer != None:
-            print(tokenizer.decode(top_indices))
+        if Params.verbose:
+            print(top_values)
+            print(top_indices)
+            if tokenizer != None:
+                print(tokenizer.decode(top_indices))
 
-        #print('shapes')
-        #print(logits.shape)
-        #print(mask.shape)
-        #print(torch.nonzero(mask != -float('inf'), as_tuple=True))
-        print('#### End create_proposal')
+            #print('shapes')
+            #print(logits.shape)
+            #print(mask.shape)
+            #print(torch.nonzero(mask != -float('inf'), as_tuple=True))
+            print('#### End create_proposal')
         return logits + mask
 
 
