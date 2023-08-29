@@ -220,8 +220,8 @@ class Regex(Continuation):
             top_10_without_mask_values, top_10_without_mask_indices = torch.topk(logits, 10, dim=-1)
             top_10_with_mask_values, top_10_with_mask_indices = torch.topk(logits + mask, 10, dim=-1)
 
-            print(f"Top 10 without mask: \n{top_10_without_mask_indices}\n{top_10_without_mask_values}\n{tokenizer.decode(top_10_without_mask_indices)}")
-            print(f"Top 10 with mask: \n{top_10_with_mask_indices}\n{top_10_with_mask_values}\n{tokenizer.decode(top_10_with_mask_indices)}")
+            print(f"Top 10 without mask: \n{top_10_without_mask_indices}\n{top_10_without_mask_values}\n{[tokenizer.decode(indice) for indice in top_10_without_mask_indices]}")
+            print(f"Top 10 with mask: \n{top_10_with_mask_indices}\n{top_10_with_mask_values}\n{[tokenizer.decode(indice) for indice in top_10_with_mask_indices]}")
 
         if Params.verbose:
             #print('shapes')
