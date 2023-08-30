@@ -392,6 +392,8 @@ def find_partial_matches(
             input_temp = input_string[1:-1]
             res = _execute(fsm, input_temp, start_state, res)
             print(f'res for {input_temp}: {res}')
+    else:
+        res = _execute(fsm, input_string, start_state, res)
 
     return res
 
