@@ -300,7 +300,7 @@ def find_partial_matches(
     plus the next, unvisited transition state.
 
     """
-    if Params.verbose or True:
+    if Params.verbose:
         print('#### BEGIN find_partial_matches Input : ')
         print(
             f'fsm:{fsm} - input_string:{input_string} - len(input_string):{len(input_string)} - start_state:{start_state}')
