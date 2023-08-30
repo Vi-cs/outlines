@@ -1,3 +1,4 @@
+import typing
 from collections import ChainMap, defaultdict
 from copy import copy
 from typing import (
@@ -301,13 +302,10 @@ def find_partial_matches(
     """
     if Params.verbose:
         print('#### BEGIN find_partial_matches Input : ')
-        print(f'fsm:{fsm} - input_string:{input_string} - len(input_string):{len(input_string)} - start_state:{start_state}')
+        print(
+            f'fsm:{fsm} - input_string:{input_string} - len(input_string):{len(input_string)} - start_state:{start_state}')
     if len(input_string) == 0 or input_string[0] not in fsm.alphabet:
         return set()
-
-    trans_key = fsm.alphabet[input_string[0]]
-    if Params.verbose:
-        print(f'trans_key:{trans_key} - input_string[0]:{input_string[0]} - fsm.alphabet:too long')
 
     # TODO: We could probably reuse parts of the computed paths when computing
     # results for multiple starting points.
@@ -353,26 +351,48 @@ def find_partial_matches(
 
         return None if not terminated else i, accepted_states
 
-    res = set()
-    transition_maps = (
-        fsm.map if start_state is None else {start_state: fsm.map[start_state]}
-    )
-    # we get to the state and ..
-    for state, trans in transition_maps.items():
+    def _execute(
+            fsm: FSM, input_string: str, start_state: Optional[int] = None, res: typing.Any = None
+    ):
+
+        trans_key = fsm.alphabet[input_string[0]]
         if Params.verbose:
-            print(
-                f'for state, trans in transition_maps.items(): state:{state} - trans:{trans} - transition_maps.items():{transition_maps.items()}')
-        # if the
-        if trans_key in trans:
-            n_matched, path = _partial_match(trans)
+            print(f'trans_key:{trans_key} - input_string[0]:{input_string[0]} - fsm.alphabet:too long')
+
+        transition_maps = (
+            fsm.map if start_state is None else {start_state: fsm.map[start_state]}
+        )
+        # we get to the state and ..
+        for state, trans in transition_maps.items():
             if Params.verbose:
-                print(f'n_matched:{n_matched} - path:{path}')
-            if path is not None:
-                res.add((n_matched, (state,) + path))
-    if Params.verbose:
-        print('Output : ')
-        print(res)
-        print('#### END find_partial_matches')
+                print(
+                    f'for state, trans in transition_maps.items(): state:{state} - trans:{trans} - transition_maps.items():{transition_maps.items()}')
+            # if the
+            if trans_key in trans:
+                n_matched, path = _partial_match(trans)
+                if Params.verbose:
+                    print(f'n_matched:{n_matched} - path:{path}')
+                if path is not None:
+                    res.add((n_matched, (state,) + path))
+        if Params.verbose:
+            print('Output : ')
+            print(res)
+            print('#### END find_partial_matches')
+        return res
+
+    res = set()
+
+    if '▁' in input_string:
+        print(f'found ▁ in {input_string}')
+        input_temp = input_string.replace('▁', ' ')
+        res = _execute(fsm, input_temp, start_state, res)
+        print(f'res for {input_temp}: {res}')
+        # if (start_state == fsm.initial or start_state is None) and \
+        if input_string[0] == ' ':
+            input_temp = input_string[1:-1]
+            res = _execute(fsm, input_temp, start_state, res)
+            print(f'res for {input_temp}: {res}')
+
     return res
 
 
@@ -452,7 +472,8 @@ def map_partial_states_to_vocab(
             else:
                 activate_log = False
             if Params.verbose and activate_log:
-                print(f'-- for i, vocab_string in enumerate(vocabulary): i:{i} - vocab_string:{vocab_string} - len(vocab_string):{len(vocab_string)}')
+                print(
+                    f'-- for i, vocab_string in enumerate(vocabulary): i:{i} - vocab_string:{vocab_string} - len(vocab_string):{len(vocab_string)}')
             '''The first element of each tuple contains either ``None`` or an integer
             indicating the position in `input_string` at which the FSM terminated.  The
             second element is the tuple of states visited during execution of the FSM

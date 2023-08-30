@@ -103,10 +103,10 @@ class TransformersTokenizer(Tokenizer):
 
         string = self.tokenizer.convert_tokens_to_string([token])
 
-        if token[0] == '▁':
+        '''if token[0] == '▁':
             string = ' ' + string
         if len(token)>1 and token[-1] == '▁':
-            string = string + ' '
+            string = string + ' '  '''
 
         return string
 
