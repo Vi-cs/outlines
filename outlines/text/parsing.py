@@ -272,7 +272,7 @@ def parse_to_end(parser_state: ParserState) -> Tuple[ParserState, Set[str]]:
 
 
 def find_partial_matches(
-        fsm: FSM, input_string: str, start_state: Optional[int] = None
+        fsm: FSM, input_string: str, start_state: Optional[int] = None, activate_log: bool = False
 ) -> Set[Tuple[Optional[int], Tuple[int, ...]]]:
     """Find the states in the finite state machine `fsm` that accept `input_string`.
 
@@ -300,10 +300,10 @@ def find_partial_matches(
     plus the next, unvisited transition state.
 
     """
-    if Params.verbose:
+    if Params.verbose and activate_log:
         print('#### BEGIN find_partial_matches Input : ')
         print(
-            f'fsm:{fsm} - input_string:{input_string} - len(input_string):{len(input_string)} - start_state:{start_state}')
+            f'fsm: too long - input_string:{input_string} - len(input_string):{len(input_string)} - start_state:{start_state}')
     if len(input_string) == 0 or input_string[0] not in fsm.alphabet:
         return set()
 
@@ -316,12 +316,12 @@ def find_partial_matches(
         state = fsm.initial
         accepted_states: Tuple[int, ...] = ()
 
-        if Params.verbose:
+        if Params.verbose and activate_log:
             print('#### BEGIN find_partial_matches _partial_match - Input:')
             print(f'fsm_map:toolong state:{state} accepted_states:{accepted_states}')
 
         for i, symbol in enumerate(input_string):
-            if Params.verbose:
+            if Params.verbose and activate_log:
                 print(f'for {i}, {symbol} in enumerate({input_string}):')
 
                 print(f'if {anything_else} in fsm.alphabet and {symbol} not in fsm.alphabet:')
@@ -330,7 +330,7 @@ def find_partial_matches(
 
             # understand how this part of code works : it seems that a blank space inut is not match with a token begining with a blank space
             trans_key = fsm.alphabet[symbol]
-            if Params.verbose:
+            if Params.verbose and activate_log:
                 print(f'trans_key = fsm.alphabet[symbol]:{trans_key}')
 
             if not (state in fsm_map and trans_key in fsm_map[state]):
@@ -340,7 +340,7 @@ def find_partial_matches(
                 return None, None
 
             state = fsm_map[state][trans_key]
-            if Params.verbose:
+            if Params.verbose and activate_log:
                 print(f'state = fsm_map[state][trans_key]:{state}')
 
             accepted_states += (state,)
@@ -356,7 +356,7 @@ def find_partial_matches(
     ):
 
         trans_key = fsm.alphabet[input_string[0]]
-        if Params.verbose:
+        if Params.verbose and activate_log:
             print(f'trans_key:{trans_key} - input_string[0]:{input_string[0]} - fsm.alphabet:too long')
 
         transition_maps = (
@@ -364,17 +364,17 @@ def find_partial_matches(
         )
         # we get to the state and ..
         for state, trans in transition_maps.items():
-            if Params.verbose:
+            if Params.verbose and activate_log:
                 print(
                     f'for state, trans in transition_maps.items(): state:{state} - trans:{trans} - transition_maps.items():{transition_maps.items()}')
             # if the
             if trans_key in trans:
                 n_matched, path = _partial_match(trans)
-                if Params.verbose:
+                if Params.verbose and activate_log:
                     print(f'n_matched:{n_matched} - path:{path}')
                 if path is not None:
                     res.add((n_matched, (state,) + path))
-        if Params.verbose:
+        if Params.verbose and activate_log:
             print('Output : ')
             print(res)
             print('#### END find_partial_matches')
@@ -383,15 +383,18 @@ def find_partial_matches(
     res = set()
 
     if '▁' in input_string:
-        print(f'found ▁ in {input_string}')
+        if Params.verbose and activate_log:
+            print(f'found ▁ in {input_string}')
         input_temp = input_string.replace('▁', ' ')
         res = _execute(fsm, input_temp, start_state, res)
-        print(f'res for {input_temp}: {res}')
+        if Params.verbose and activate_log:
+            print(f'res for {input_temp}: {res}')
         # if (start_state == fsm.initial or start_state is None) and \
         if input_string[0] == ' ':
             input_temp = input_string[1:-1]
             res = _execute(fsm, input_temp, start_state, res)
-            print(f'res for {input_temp}: {res}')
+            if Params.verbose and activate_log:
+                print(f'res for {input_temp}: {res}')
     else:
         res = _execute(fsm, input_string, start_state, res)
 
@@ -460,7 +463,7 @@ def map_partial_states_to_vocab(
             activate_log = False
         log_index = log_index + 1
         if Params.verbose and activate_log:
-            print(f'for symbol_name, fsm in terminals_to_fsms_map.items(): symbol_name:{symbol_name} - fsm:{fsm}')
+            print(f'for symbol_name, fsm in terminals_to_fsms_map.items(): symbol_name:{symbol_name} - fsm: too long')
             print(
                 f'for symbol_name, fsm in terminals_to_fsms_map.items(): terminals_to_fsms_map:{terminals_to_fsms_map}')
 
@@ -469,7 +472,7 @@ def map_partial_states_to_vocab(
         for i, vocab_string in enumerate(vocabulary):
             if vocab_string == final_state_string:
                 final_state_string_idx = i
-            if i == 2132 or i == 29500:
+            if i == 1104:
                 activate_log = True
             else:
                 activate_log = False
@@ -480,7 +483,7 @@ def map_partial_states_to_vocab(
             indicating the position in `input_string` at which the FSM terminated.  The
             second element is the tuple of states visited during execution of the FSM
             plus the next, unvisited transition state.'''
-            for end_idx, state_seq in find_partial_matches(fsm, vocab_string):
+            for end_idx, state_seq in find_partial_matches(fsm, vocab_string, activate_log):
                 if Params.verbose and activate_log:
                     print(
                         f'---- for end_idx, state_seq in find_partial_matches(fsm, vocab_string): end_idx:{end_idx} - state_seq:{state_seq}')
