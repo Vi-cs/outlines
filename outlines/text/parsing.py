@@ -305,8 +305,6 @@ def find_partial_matches(
         print('#### BEGIN find_partial_matches Input : ')
         print(
             f'fsm: too long - input_strings:{input_strings} - len(input_string[-1]):{len(input_strings[-1])} - start_state:{start_state}')
-    if len(input_strings[-1]) == 0 or input_strings[-1][0] not in fsm.alphabet:
-        return set()
 
     # TODO: We could probably reuse parts of the computed paths when computing
     # results for multiple starting points.
@@ -391,7 +389,10 @@ def find_partial_matches(
         print(f'for input_strings: {input_strings}')
 
     for string in input_strings:
-        res = _execute(fsm, string, start_state, res)
+
+        if not(len(string) == 0 or string[0] not in fsm.alphabet):
+            res = _execute(fsm, string, start_state, res)
+
         if Params.verbose and activate_log:
             print(f'res for {string}: {res}')
         # if (start_state == fsm.initial or start_state is None) and \
