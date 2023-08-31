@@ -11,6 +11,7 @@ from typing import (
     Optional,
     Set,
     Tuple,
+    List
 )
 
 import interegular
@@ -272,7 +273,7 @@ def parse_to_end(parser_state: ParserState) -> Tuple[ParserState, Set[str]]:
 
 
 def find_partial_matches(
-        fsm: FSM, input_string: str, start_state: Optional[int] = None, activate_log: bool = False
+        fsm: FSM, input_strings: List[str], start_state: Optional[int] = None, activate_log: bool = False
 ) -> Set[Tuple[Optional[int], Tuple[int, ...]]]:
     """Find the states in the finite state machine `fsm` that accept `input_string`.
 
@@ -303,14 +304,15 @@ def find_partial_matches(
     if Params.verbose and activate_log:
         print('#### BEGIN find_partial_matches Input : ')
         print(
-            f'fsm: too long - input_string:{input_string} - len(input_string):{len(input_string)} - start_state:{start_state}')
-    if len(input_string) == 0 or input_string[0] not in fsm.alphabet:
+            f'fsm: too long - input_strings:{input_strings} - len(input_string[-1]):{len(input_strings[-1])} - start_state:{start_state}')
+    if len(input_strings[-1]) == 0 or input_strings[0] not in fsm.alphabet:
         return set()
 
     # TODO: We could probably reuse parts of the computed paths when computing
     # results for multiple starting points.
     def _partial_match(
-            trans: Dict[int, int]
+            trans: Dict[int, int],
+            input_string: str
     ) -> Tuple[Optional[int], Optional[Tuple[int, ...]]]:
         fsm_map = ChainMap({fsm.initial: trans}, fsm.map)
         state = fsm.initial
@@ -382,21 +384,14 @@ def find_partial_matches(
 
     res = set()
 
-    if '▁' in input_string:
+    if not (start_state == fsm.initial or start_state is None):
+        input_strings = input_strings[1:]
+
+    for string in input_strings:
+        res = _execute(fsm, string, start_state, res)
         if Params.verbose and activate_log:
-            print(f'found ▁ in {input_string}')
-        input_temp = input_string.replace('▁', ' ')
-        res = _execute(fsm, input_temp, start_state, res)
-        if Params.verbose and activate_log:
-            print(f'res for {input_temp}: {res}')
+            print(f'res for {string}: {res}')
         # if (start_state == fsm.initial or start_state is None) and \
-        if input_string[0] == ' ':
-            input_temp = input_string[1:-1]
-            res = _execute(fsm, input_temp, start_state, res)
-            if Params.verbose and activate_log:
-                print(f'res for {input_temp}: {res}')
-    else:
-        res = _execute(fsm, input_string, start_state, res)
 
     return res
 
@@ -419,7 +414,7 @@ def terminals_to_fsms(lp: Lark) -> Dict[str, FSM]:
 
 
 def map_partial_states_to_vocab(
-        vocabulary: Iterable[str],
+        vocabulary: Iterable[List[str]],
         terminals_to_fsms_map: Dict[str, FSM],
         partial_match_filter: Callable[
             [str, Optional[int], Tuple[int, ...]], bool

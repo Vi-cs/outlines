@@ -98,7 +98,7 @@ class TransformersTokenizer(Tokenizer):
         text = self.tokenizer.batch_decode(token_ids)
         return text
 
-    def convert_token_to_string(self, token: str, v: int) -> str:
+    def convert_token_to_string(self, token: str, v: int) -> List[str]:
         #print(f'convert_token_to_string: token:{token} v:{v} isinstance(v, int):{isinstance(v, int)}')
 
         string = self.tokenizer.convert_tokens_to_string([token])
@@ -107,11 +107,14 @@ class TransformersTokenizer(Tokenizer):
             string = ' ' + string
         if len(token)>1 and token[-1] == '▁':
             string = string + ' '  '''
-
+        #it seems that if this char is present, then they always are on the left
         if '▁' in token:
-            string = "▁" * token.count("▁") + string
+            string_firstword = " " * token.count("▁")-1 + string
+            string_nextword = " " * token.count("▁") + string
 
-        return string
+            return [string_firstword,string_nextword]
+
+        return [string]
 
 
 def transformers(model_name: str, device: Optional[str] = None, **model_kwargs):

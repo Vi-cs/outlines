@@ -44,7 +44,10 @@ class Regex(Continuation):
         self.regex_fsm = regex_pattern.to_fsm().reduce()
 
         def partial_match_filter(string, end_idx, state_seq):
-            if end_idx is not None and end_idx < len(string) - 1:
+            temp = string[0]
+            if not (state_seq == self.regex_fsm.initial or state_seq is None):
+                temp = string[-1]
+            if end_idx is not None and end_idx < len(temp) - 1:
                 return False
             return True
 
@@ -159,7 +162,10 @@ class Regex(Continuation):
                     token_corrected=None
                     for tok, i in self.model.tokenizer.vocabulary.items():
                         if i == readable_tokens.item() :
-                            sequence_corrected = [self.model.tokenizer.convert_token_to_string(tok, i)]
+                            sequences_corrected = [self.model.tokenizer.convert_token_to_string(tok, i)]
+                            sequence_corrected = sequences_corrected[0]
+                            if not (last_fsm_state == self.regex_fsm.initial or last_fsm_state is None):
+                                sequence_corrected = sequences_corrected[-1]
                             token_corrected=tok
 
                     if Params.verbose:
