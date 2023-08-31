@@ -357,7 +357,7 @@ def find_partial_matches(
             fsm: FSM, input_string: str, start_state: Optional[int] = None, res: typing.Any = None
     ):
 
-        trans_key = fsm.alphabet[input_string]
+        trans_key = fsm.alphabet[input_string[0]]
         if Params.verbose and activate_log:
             print(f'trans_key:{trans_key} - input_string:{input_string} - fsm.alphabet:too long')
 
@@ -369,7 +369,7 @@ def find_partial_matches(
             if Params.verbose and activate_log:
                 print(
                     f'for state, trans in transition_maps.items(): state:{state} - trans:{trans} - transition_maps.items():{transition_maps.items()}')
-            # if the
+            # if the trans_key (vocab key of the first letter of the input_string)
             if trans_key in trans:
                 n_matched, path = _partial_match(trans,input_string )
                 if Params.verbose and activate_log:
