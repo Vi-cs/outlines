@@ -357,9 +357,9 @@ def find_partial_matches(
             fsm: FSM, input_string: str, start_state: Optional[int] = None, res: typing.Any = None
     ):
 
-        trans_key = fsm.alphabet[input_string[0]]
+        trans_key = fsm.alphabet[input_string]
         if Params.verbose and activate_log:
-            print(f'trans_key:{trans_key} - input_string[0]:{input_string[0]} - fsm.alphabet:too long')
+            print(f'trans_key:{trans_key} - input_string[0]:{input_string} - fsm.alphabet:too long')
 
         transition_maps = (
             fsm.map if start_state is None else {start_state: fsm.map[start_state]}
