@@ -108,6 +108,9 @@ class TransformersTokenizer(Tokenizer):
         if len(token)>1 and token[-1] == '▁':
             string = string + ' '  '''
 
+        if '▁' in token:
+            string = "▁" * token.count("▁") + string
+
         return string
 
 
