@@ -305,7 +305,7 @@ def find_partial_matches(
         print('#### BEGIN find_partial_matches Input : ')
         print(
             f'fsm: too long - input_strings:{input_strings} - len(input_string[-1]):{len(input_strings[-1])} - start_state:{start_state}')
-    if len(input_strings[-1]) == 0 or input_strings[0] not in fsm.alphabet:
+    if len(input_strings[-1]) == 0 or input_strings[-1][0] not in fsm.alphabet:
         return set()
 
     # TODO: We could probably reuse parts of the computed paths when computing
