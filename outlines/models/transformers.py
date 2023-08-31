@@ -109,7 +109,7 @@ class TransformersTokenizer(Tokenizer):
             string = string + ' '  '''
         #it seems that if this char is present, then they always are on the left
         if '▁' in token:
-            string_firstword = " " * token.count("▁")-1 + string
+            string_firstword = " " * (token.count("▁")-1) + string
             string_nextword = " " * token.count("▁") + string
 
             return [string_firstword,string_nextword]
