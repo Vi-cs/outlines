@@ -458,10 +458,7 @@ def map_partial_states_to_vocab(
             activate_log = False
         log_index = log_index + 1
         if Params.verbose and activate_log:
-            print(f'for symbol_name, fsm in terminals_to_fsms_map.items(): symbol_name:{symbol_name} - fsm: too long')
-            print(
-                f'for symbol_name, fsm in terminals_to_fsms_map.items(): terminals_to_fsms_map:{terminals_to_fsms_map}')
-
+            print(f'for symbol_name, fsm in terminals_to_fsms_map.items(): symbol_name:{symbol_name} - fsm: too long - terminals_to_fsms_map:{terminals_to_fsms_map}')
         terminal_possible_paths = defaultdict(set)
         # iterate on vocab string, at index i in the vocab
         for i, vocab_string in enumerate(vocabulary):
@@ -478,7 +475,7 @@ def map_partial_states_to_vocab(
             indicating the position in `input_string` at which the FSM terminated.  The
             second element is the tuple of states visited during execution of the FSM
             plus the next, unvisited transition state.'''
-            for end_idx, state_seq in find_partial_matches(fsm, vocab_string, activate_log):
+            for end_idx, state_seq in find_partial_matches(fsm=fsm, input_strings=vocab_string, activate_log=activate_log):
                 if Params.verbose and activate_log:
                     print(
                         f'---- for end_idx, state_seq in find_partial_matches(fsm, vocab_string): end_idx:{end_idx} - state_seq:{state_seq}')
