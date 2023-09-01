@@ -180,7 +180,7 @@ class Regex(Continuation):
 
                     if Params.verbose:
                         print(f'last_fsm_state:{last_fsm_state}')
-                    ((_, state_seq),) = find_partial_matches(
+                    ((_, state_seq),corresponding_sequence) = find_partial_matches(
                         self.regex_fsm,
                         "".join(sequence),
                         start_state=last_fsm_state,
@@ -189,7 +189,7 @@ class Regex(Continuation):
                     pstate = (
                         "REGEX",
                         state_seq[-1],
-                        last_token_idx + len(sequence),
+                        last_token_idx + len(corresponding_sequence),
                     )
                 else:
                     pstate = ("REGEX", -1, last_token_idx)
