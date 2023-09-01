@@ -100,7 +100,7 @@ class Regex(Continuation):
         self.pstates: List[Tuple[str, int, int]] = []
 
     def create_proposal(
-        self, generated_token_ids: torch.LongTensor, logits: torch.DoubleTensor, tokenizer: any = None
+            self, generated_token_ids: torch.LongTensor, logits: torch.DoubleTensor, tokenizer: any = None
     ) -> torch.DoubleTensor:
         """Modify the next-token logits so that only integers can be generated.
 
@@ -114,12 +114,12 @@ class Regex(Continuation):
         """
         if Params.verbose:
             print('#### BEGIN create_proposal')
-            #print('Input : ')
-            #print(generated_token_ids)
-            #print(logits)
-            #print('shapes')
-            #print(generated_token_ids.shape)
-            #print(logits.shape)
+            # print('Input : ')
+            # print(generated_token_ids)
+            # print(logits)
+            # print('shapes')
+            # print(generated_token_ids.shape)
+            # print(logits.shape)
         if len(self.pstates) == 0:
             self.pstates = [
                 ("REGEX", self.regex_fsm.initial, 0)
@@ -130,17 +130,18 @@ class Regex(Continuation):
         if generated_token_ids.shape[-1] > 0:
             new_pstates = []
             for token_seq, (_, last_fsm_state, last_token_idx) in zip(
-                generated_token_ids,
-                self.pstates,
+                    generated_token_ids,
+                    self.pstates,
             ):
                 if Params.verbose:
-                    print(f'for token_seq, (_, last_fsm_state, last_token_idx) in zip(generated_token_ids,self.pstates,): token_seq:{token_seq}, last_fsm_state:{last_fsm_state}, last_token_idx:{last_token_idx}')
+                    print(
+                        f'for token_seq, (_, last_fsm_state, last_token_idx) in zip(generated_token_ids,self.pstates,): token_seq:{token_seq}, last_fsm_state:{last_fsm_state}, last_token_idx:{last_token_idx}')
                     print(f'generated_token_ids:{generated_token_ids}, self.pstates:{self.pstates}')
                 # Get the tokens we haven't already processed
                 readable_tokens = token_seq[last_token_idx:]
                 if Params.verbose:
                     print(f'readable_tokens:{readable_tokens}')
-                    #print(readable_tokens)
+                    # print(readable_tokens)
                 # excluding any EOS tokens
                 not_eos_mask = [
                     tk != self.model.tokenizer.eos_token_id for tk in readable_tokens
@@ -155,22 +156,27 @@ class Regex(Continuation):
 
                     sequence = self.model.tokenizer.decode(readable_tokens)
                     if Params.verbose:
-                        if len(sequence)>1:
+                        if len(sequence) > 1:
                             print(f'############################################# len(sequence)>1: sequence:{sequence}')
                         print(f'readable_tokens (without current token): {readable_tokens} - {sequence}')
                     sequence_corrected = None
-                    token_corrected=None
+                    token_corrected = None
                     for tok, i in self.model.tokenizer.vocabulary.items():
-                        if i == readable_tokens.item() :
+                        if i == readable_tokens.item():
                             sequences_corrected = [self.model.tokenizer.convert_token_to_string(tok, i)]
                             sequence_corrected = sequences_corrected[0]
                             if not (last_fsm_state == self.regex_fsm.initial or last_fsm_state is None):
                                 sequence_corrected = sequences_corrected[-1]
-                            token_corrected=tok
+                            token_corrected = tok
+
+                    if not (last_fsm_state == self.regex_fsm.initial or last_fsm_state is None):
+                        sequence = sequence_corrected[-1]
+                    else:
+                        sequence = sequence_corrected[0]
 
                     if Params.verbose:
-                        print(f'readable_tokens corrected (without current token): {token_corrected} - {sequence_corrected}')
-                    sequence=sequence_corrected
+                        print(
+                            f'readable_tokens corrected (without current token): {token_corrected} - {sequence_corrected}')
 
                     ((_, state_seq),) = find_partial_matches(
                         self.regex_fsm,
@@ -185,8 +191,8 @@ class Regex(Continuation):
                 else:
                     pstate = ("REGEX", -1, last_token_idx)
 
-                #print('pstate')
-                #print(pstate)
+                # print('pstate')
+                # print(pstate)
 
                 new_pstates.append(pstate)
                 if Params.verbose:
@@ -218,22 +224,23 @@ class Regex(Continuation):
 
         mask = torch.concatenate(masks, dim=0)
 
-
         top_1_without_mask_values, top_1_without_mask_indices = torch.topk(logits, 1, dim=-1)
         top_1_with_mask_values, top_1_with_mask_indices = torch.topk(logits + mask, 1, dim=-1)
 
-        if top_1_without_mask_values!=top_1_with_mask_values:
+        if top_1_without_mask_values != top_1_with_mask_values:
             top_10_without_mask_values, top_10_without_mask_indices = torch.topk(logits, 10, dim=-1)
             top_10_with_mask_values, top_10_with_mask_indices = torch.topk(logits + mask, 10, dim=-1)
 
-            print(f"Top 10 without mask: \n{top_10_without_mask_indices}\n{top_10_without_mask_values}\n{[tokenizer.decode(indice) for indice in top_10_without_mask_indices]}")
-            print(f"Top 10 with mask: \n{top_10_with_mask_indices}\n{top_10_with_mask_values}\n{[tokenizer.decode(indice) for indice in top_10_with_mask_indices]}")
+            print(
+                f"Top 10 without mask: \n{top_10_without_mask_indices}\n{top_10_without_mask_values}\n{[tokenizer.decode(indice) for indice in top_10_without_mask_indices]}")
+            print(
+                f"Top 10 with mask: \n{top_10_with_mask_indices}\n{top_10_with_mask_values}\n{[tokenizer.decode(indice) for indice in top_10_with_mask_indices]}")
 
         if Params.verbose:
-            #print('shapes')
-            #print(logits.shape)
-            #print(mask.shape)
-            #print(torch.nonzero(mask != -float('inf'), as_tuple=True))
+            # print('shapes')
+            # print(logits.shape)
+            # print(mask.shape)
+            # print(torch.nonzero(mask != -float('inf'), as_tuple=True))
             print('#### End create_proposal')
 
         return logits + mask
