@@ -164,10 +164,10 @@ class Regex(Continuation):
                     #for tok, i in self.model.tokenizer.vocabulary.items():
                     #    if i == readable_tokens.item():
                     #        sequences_corrected = [self.model.tokenizer.convert_token_to_string(tok, i)]
-                            '''sequence_corrected = sequences_corrected[0]
-                            if not (last_fsm_state == self.regex_fsm.initial or last_fsm_state is None):
-                                sequence_corrected = sequences_corrected[-1]'''
-                #        token_corrected = tok
+                    #        '''sequence_corrected = sequences_corrected[0]
+                    #        if not (last_fsm_state == self.regex_fsm.initial or last_fsm_state is None):
+                    #            sequence_corrected = sequences_corrected[-1]'''
+                    #     token_corrected = tok
 
                     '''if not (last_fsm_state == self.regex_fsm.initial or last_fsm_state is None):
                         sequence = sequence_corrected[-1]
