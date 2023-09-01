@@ -178,6 +178,8 @@ class Regex(Continuation):
                 #    print(
                 #        f'readable_tokens corrected (without current token): {token_corrected} - {sequences_corrected}')
 
+                    if Params.verbose:
+                        print(f'last_fsm_state:{last_fsm_state}')
                     ((_, state_seq),) = find_partial_matches(
                         self.regex_fsm,
                         "".join(sequence),
