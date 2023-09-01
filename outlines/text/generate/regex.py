@@ -155,28 +155,28 @@ class Regex(Continuation):
                     assert last_fsm_state > -1
 
                     sequence = self.model.tokenizer.decode(readable_tokens)
-                    if Params.verbose:
-                        if len(sequence) > 1:
-                            print(f'############################################# len(sequence)>1: sequence:{sequence}')
-                        print(f'readable_tokens (without current token): {readable_tokens} - {sequence}')
-                    sequence_corrected = None
-                    token_corrected = None
-                    for tok, i in self.model.tokenizer.vocabulary.items():
-                        if i == readable_tokens.item():
-                            sequences_corrected = [self.model.tokenizer.convert_token_to_string(tok, i)]
-                            sequence_corrected = sequences_corrected[0]
+                    #if Params.verbose:
+                    #    if len(sequence) > 1:
+                    #        print(f'############################################# len(sequence)>1: sequence:{sequence}')
+                    #    print(f'readable_tokens (without current token): {readable_tokens} - {sequence}')
+                    #sequence_corrected = None
+                    #token_corrected = None
+                    #for tok, i in self.model.tokenizer.vocabulary.items():
+                    #    if i == readable_tokens.item():
+                    #        sequences_corrected = [self.model.tokenizer.convert_token_to_string(tok, i)]
+                            '''sequence_corrected = sequences_corrected[0]
                             if not (last_fsm_state == self.regex_fsm.initial or last_fsm_state is None):
-                                sequence_corrected = sequences_corrected[-1]
-                            token_corrected = tok
+                                sequence_corrected = sequences_corrected[-1]'''
+                #        token_corrected = tok
 
-                    if not (last_fsm_state == self.regex_fsm.initial or last_fsm_state is None):
+                    '''if not (last_fsm_state == self.regex_fsm.initial or last_fsm_state is None):
                         sequence = sequence_corrected[-1]
                     else:
-                        sequence = sequence_corrected[0]
+                        sequence = sequence_corrected[0]'''
 
-                    if Params.verbose:
-                        print(
-                            f'readable_tokens corrected (without current token): {token_corrected} - {sequence_corrected}')
+                    #if Params.verbose:
+                #    print(
+                #        f'readable_tokens corrected (without current token): {token_corrected} - {sequences_corrected}')
 
                     ((_, state_seq),) = find_partial_matches(
                         self.regex_fsm,
