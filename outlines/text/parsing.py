@@ -373,7 +373,7 @@ def find_partial_matches(
                 if Params.verbose and activate_log:
                     print(f'n_matched:{n_matched} - path:{path}')
                 if path is not None:
-                    res.add((n_matched, (state,) + path),input_string)
+                    res.add((n_matched, (state,) + path,input_string))
         if Params.verbose and activate_log:
             print('Output : ')
             print(res)
