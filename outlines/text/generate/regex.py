@@ -188,7 +188,7 @@ class Regex(Continuation):
                         activate_log=True
                     )
 
-                    ((_, state_seq, corresponding_sequence))=partial_matches
+                    (_, state_seq, corresponding_sequence)=partial_matches
 
                     if Params.verbose:
                         print(f'partial_matches:{partial_matches} - state_seq:{state_seq} - corresponding_sequence:{corresponding_sequence}')
