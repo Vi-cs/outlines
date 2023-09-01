@@ -483,17 +483,17 @@ def map_partial_states_to_vocab(
             indicating the position in `input_string` at which the FSM terminated.  The
             second element is the tuple of states visited during execution of the FSM
             plus the next, unvisited transition state.'''
-            for end_idx, state_seq in find_partial_matches(fsm=fsm, input_strings=vocab_string, activate_log=activate_log):
+            for end_idx, state_seq, string in find_partial_matches(fsm=fsm, input_strings=vocab_string, activate_log=activate_log):
                 if Params.verbose and activate_log:
                     print(
                         f'---- for end_idx, state_seq in find_partial_matches(fsm, vocab_string): end_idx:{end_idx} - state_seq:{state_seq}')
                     print(
-                        f'---- if partial_match_filter(vocab_string, end_idx, state_seq): {partial_match_filter(vocab_string, end_idx, state_seq)}')
+                        f'---- if partial_match_filter(vocab_string, end_idx, state_seq): {partial_match_filter(string, end_idx, state_seq)}')
                 ''' def partial_match_filter(string, end_idx, state_seq):
                     if end_idx is not None and end_idx < len(string) - 1:
                         return False
                     return True'''
-                if partial_match_filter(vocab_string, end_idx, state_seq):
+                if partial_match_filter(string, end_idx, state_seq):
                     terminal_possible_paths[state_seq[0]].add(state_seq[-1])
                     if Params.verbose and activate_log:
                         print(

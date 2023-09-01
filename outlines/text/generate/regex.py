@@ -44,10 +44,10 @@ class Regex(Continuation):
         self.regex_fsm = regex_pattern.to_fsm().reduce()
 
         def partial_match_filter(string, end_idx, state_seq):
-            temp = string[0]
+            '''temp = string[0]
             if not (state_seq == self.regex_fsm.initial or state_seq is None):
-                temp = string[-1]
-            if end_idx is not None and end_idx < len(temp) - 1:
+                temp = string[-1]'''
+            if end_idx is not None and end_idx < len(string) - 1:
                 return False
             return True
 
