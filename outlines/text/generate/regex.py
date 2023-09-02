@@ -188,6 +188,8 @@ class Regex(Continuation):
                         activate_log=True
                     )
 
+                    if Params.verbose:
+                        print(f'partial_matches:{partial_matches}')
                     (_, state_seq, corresponding_sequence)=partial_matches
 
                     if Params.verbose:
