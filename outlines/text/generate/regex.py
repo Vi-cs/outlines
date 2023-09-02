@@ -164,7 +164,7 @@ class Regex(Continuation):
                     #token_corrected = None
                     for tok, i in self.model.tokenizer.vocabulary.items():
                         if i == readable_tokens.item():
-                            sequence = [self.model.tokenizer.convert_token_to_string(tok, i)]
+                            sequence = self.model.tokenizer.convert_token_to_string(tok, i)
                     #        '''sequence_corrected = sequences_corrected[0]
                     #        if not (last_fsm_state == self.regex_fsm.initial or last_fsm_state is None):
                     #            sequence_corrected = sequences_corrected[-1]'''
