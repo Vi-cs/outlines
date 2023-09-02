@@ -184,7 +184,7 @@ class Regex(Continuation):
 
                     partial_matches = find_partial_matches(
                         self.regex_fsm,
-                        "".join(sequence),
+                        sequence,
                         start_state=last_fsm_state,
                         activate_log=True
                     )
