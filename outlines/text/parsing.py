@@ -387,7 +387,7 @@ def find_partial_matches(
         input_strings = input_strings[1:]
     #if it is the first token (and not the gms calculation)
     elif not start_state is None:
-        input_strings = input_strings[0]
+        input_strings = input_strings[:1]
 
     if Params.verbose and activate_log:
         print(f'for input_strings: {input_strings}')
@@ -396,6 +396,7 @@ def find_partial_matches(
 
         if not(len(string) == 0 or string[0] not in fsm.alphabet):
             res = _execute(fsm, string, start_state, res)
+
 
         if Params.verbose and activate_log:
             print(f'res for {string}: {res}')
