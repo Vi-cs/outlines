@@ -199,7 +199,7 @@ class Regex(Continuation):
                     pstate = (
                         "REGEX",
                         state_seq[-1],
-                        last_token_idx + len(readable_tokens),
+                        last_token_idx + len(corresponding_sequence),
                     )
                 else:
                     pstate = ("REGEX", -1, last_token_idx)
