@@ -60,6 +60,9 @@ class Regex(Continuation):
             final_state_string=model.tokenizer.eos_token,
         )
 
+        # use model.tokenizer.eos_token_id as a dummy token to handle token decoding begining with spaces.
+        #self.eos_token_id_len = len(self.model.tokenizer.decode(model.tokenizer.eos_token_id))
+
         '''if os.path.exists('/content/pstate_to_vocab.pkl') and os.path.exists('/content/paths.pkl'):
             with open("/content/pstate_to_vocab.pkl", "rb") as pickle_file:
                 pstate_to_vocab = pickle.load(pickle_file)
@@ -152,7 +155,6 @@ class Regex(Continuation):
                 ]
                 readable_tokens = readable_tokens[not_eos_mask]
 
-
                 if Params.verbose:
                     print(f'readable_tokens[not_eos_mask]:{readable_tokens[not_eos_mask]}')
                 if len(readable_tokens) > 0:
@@ -161,33 +163,37 @@ class Regex(Continuation):
                     assert last_fsm_state > -1
 
                     sequence = self.model.tokenizer.decode(readable_tokens)
-                    #if Params.verbose:
+                    # if Params.verbose:
                     #    if len(sequence) > 1:
                     #        print(f'############################################# len(sequence)>1: sequence:{sequence}')
                     #    print(f'readable_tokens (without current token): {readable_tokens} - {sequence}')
-                    sequence_corrected = None
-                    #token_corrected = None
-                    #for tok, i in self.model.tokenizer.vocabulary.items():
-                    #    if i == readable_tokens.item():
-                    #        sequence = self.model.tokenizer.convert_token_to_string(tok, i)
+                    sequence_corrected = []
+                    # token_corrected = None
+
+                    if len(sequence) != 1:
+                        raise ('len(sequence) expected 1, got :' + len(sequence))
+
+                    for tok, i in self.model.tokenizer.vocabulary.items():
+                        if i == readable_tokens.item():
+                            sequence_corrected = self.model.tokenizer.convert_token_to_string(tok, i)
                     #        '''sequence_corrected = sequences_corrected[0]
                     #        if not (last_fsm_state == self.regex_fsm.initial or last_fsm_state is None):
                     #            sequence_corrected = sequences_corrected[-1]'''
                     #     token_corrected = tok
 
-                    '''if not (last_fsm_state == self.regex_fsm.initial or last_fsm_state is None):
+                    if not (last_fsm_state == self.regex_fsm.initial or last_fsm_state is None):
                         sequence = sequence_corrected[-1]
                     else:
-                        sequence = sequence_corrected[0]'''
+                        sequence = sequence_corrected[0]
 
-                    #if Params.verbose:
-                #    print(
-                #        f'readable_tokens corrected (without current token): {token_corrected} - {sequences_corrected}')
+                    # if Params.verbose:
+                    #    print(
+                    #        f'readable_tokens corrected (without current token): {token_corrected} - {sequences_corrected}')
 
                     if Params.verbose:
                         print(f'last_fsm_state:{last_fsm_state} - sequence:{sequence}')
 
-                    ((_, state_seq,_),) = find_partial_matches(
+                    ((_, state_seq, _),) = find_partial_matches(
                         self.regex_fsm,
                         ["".join(sequence)],
                         start_state=last_fsm_state,
