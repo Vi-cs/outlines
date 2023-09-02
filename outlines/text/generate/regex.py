@@ -129,6 +129,8 @@ class Regex(Continuation):
             print(f'self.pstates:{self.pstates}')
         if generated_token_ids.shape[-1] > 0:
             new_pstates = []
+            if Params.verbose:
+                print(f'generated_token_ids:{generated_token_ids}, self.pstates:{self.pstates}')
             for token_seq, (_, last_fsm_state, last_token_idx) in zip(
                     generated_token_ids,
                     self.pstates,
@@ -136,7 +138,7 @@ class Regex(Continuation):
                 if Params.verbose:
                     print(
                         f'for token_seq, (_, last_fsm_state, last_token_idx) in zip(generated_token_ids,self.pstates,): token_seq:{token_seq}, last_fsm_state:{last_fsm_state}, last_token_idx:{last_token_idx}')
-                    print(f'generated_token_ids:{generated_token_ids}, self.pstates:{self.pstates}')
+
                 # Get the tokens we haven't already processed
                 readable_tokens = token_seq[last_token_idx:]
                 if Params.verbose:
@@ -147,9 +149,11 @@ class Regex(Continuation):
                     tk != self.model.tokenizer.eos_token_id for tk in readable_tokens
                 ]
                 readable_tokens = readable_tokens[not_eos_mask]
+
+
                 if Params.verbose:
                     print(f'readable_tokens[not_eos_mask]:{readable_tokens[not_eos_mask]}')
-                if len(readable_tokens) > 0:
+                if len(readable_tokens) > 0 and len(readable_tokens)==1:
                     # If we previously ended with an EOS, we shouldn't be
                     # getting/sampling any more non-EOS tokens
                     assert last_fsm_state > -1
@@ -199,9 +203,12 @@ class Regex(Continuation):
                     pstate = (
                         "REGEX",
                         state_seq[-1],
-                        last_token_idx + len(corresponding_sequence),
+                        last_token_idx + len(readable_tokens),
                     )
+                elif len(readable_tokens)>1:
+                    raise ValueError('maximum token to process is 1, get '+len(readable_tokens))
                 else:
+
                     pstate = ("REGEX", -1, last_token_idx)
 
                 # print('pstate')
