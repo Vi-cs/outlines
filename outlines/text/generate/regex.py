@@ -42,6 +42,8 @@ class Regex(Continuation):
 
         regex_pattern = interegular.parse_pattern(regex_string)
         self.regex_fsm = regex_pattern.to_fsm().reduce()
+        if Params.verbose:
+            print(f'self.regex_fsm.alphabet:{self.regex_fsm.alphabet}')
 
         def partial_match_filter(string, end_idx, state_seq):
             '''temp = string[0]

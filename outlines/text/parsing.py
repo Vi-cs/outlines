@@ -328,7 +328,6 @@ def find_partial_matches(
             if anything_else in fsm.alphabet and symbol not in fsm.alphabet:
                 symbol = anything_else
 
-            # understand how this part of code works : it seems that a blank space inut is not match with a token begining with a blank space
             trans_key = fsm.alphabet[symbol]
             if Params.verbose and activate_log:
                 print(f'trans_key = fsm.alphabet[symbol]:{trans_key}')
@@ -479,7 +478,7 @@ def map_partial_states_to_vocab(
         for i, vocab_string in enumerate(vocabulary):
             if vocab_string == final_state_string:
                 final_state_string_idx = i
-            if i == 1104:
+            if i == 1100004:
                 activate_log = True
             else:
                 activate_log = False
