@@ -385,7 +385,7 @@ def find_partial_matches(
     if isinstance(input_strings, list):
         #if it is not the first token
         if not (start_state == fsm.initial or start_state is None):
-            input_strings = input_strings[-1]
+            input_strings = input_strings[1:]
         #if it is the first token (and not the gms calculation)
         elif not start_state is None:
             input_strings = input_strings[:1]
