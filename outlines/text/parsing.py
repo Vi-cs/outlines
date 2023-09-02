@@ -382,12 +382,17 @@ def find_partial_matches(
 
     res = set()
 
-    #if it is not the first token
-    if not (start_state == fsm.initial or start_state is None):
-        input_strings = input_strings[1:]
-    #if it is the first token (and not the gms calculation)
-    elif not start_state is None:
-        input_strings = input_strings[:1]
+    if isinstance(input_strings, list):
+        #if it is not the first token
+        if not (start_state == fsm.initial or start_state is None):
+            input_strings = input_strings[-1]
+        #if it is the first token (and not the gms calculation)
+        elif not start_state is None:
+            input_strings = input_strings[:1]
+        else:
+            ## we keep both is it is for vocab
+    else:
+        input_strings=[input_strings]
 
     if Params.verbose and activate_log:
         print(f'for input_strings: {input_strings}')

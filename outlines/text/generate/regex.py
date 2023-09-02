@@ -154,16 +154,17 @@ class Regex(Continuation):
                     # getting/sampling any more non-EOS tokens
                     assert last_fsm_state > -1
 
-                    sequence = self.model.tokenizer.decode(readable_tokens)
+                    #sequence = self.model.tokenizer.decode(readable_tokens)
+                    sequence=""
                     #if Params.verbose:
                     #    if len(sequence) > 1:
                     #        print(f'############################################# len(sequence)>1: sequence:{sequence}')
                     #    print(f'readable_tokens (without current token): {readable_tokens} - {sequence}')
-                    #sequence_corrected = None
+                    sequence_corrected = None
                     #token_corrected = None
-                    #for tok, i in self.model.tokenizer.vocabulary.items():
-                    #    if i == readable_tokens.item():
-                    #        sequences_corrected = [self.model.tokenizer.convert_token_to_string(tok, i)]
+                    for tok, i in self.model.tokenizer.vocabulary.items():
+                        if i == readable_tokens.item():
+                            sequence = [self.model.tokenizer.convert_token_to_string(tok, i)]
                     #        '''sequence_corrected = sequences_corrected[0]
                     #        if not (last_fsm_state == self.regex_fsm.initial or last_fsm_state is None):
                     #            sequence_corrected = sequences_corrected[-1]'''
