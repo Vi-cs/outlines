@@ -390,6 +390,7 @@ def find_partial_matches(
         elif not start_state is None:
             input_strings = input_strings[:1]
         else:
+            input_strings=input_strings
             ## we keep both is it is for vocab
     else:
         input_strings=[input_strings]
