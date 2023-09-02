@@ -153,22 +153,21 @@ class Regex(Continuation):
 
                 if Params.verbose:
                     print(f'readable_tokens[not_eos_mask]:{readable_tokens[not_eos_mask]}')
-                if len(readable_tokens) > 0 and len(readable_tokens)==1:
+                if len(readable_tokens) > 0:
                     # If we previously ended with an EOS, we shouldn't be
                     # getting/sampling any more non-EOS tokens
                     assert last_fsm_state > -1
 
-                    #sequence = self.model.tokenizer.decode(readable_tokens)
-                    sequence=""
+                    sequence = self.model.tokenizer.decode(readable_tokens)
                     #if Params.verbose:
                     #    if len(sequence) > 1:
                     #        print(f'############################################# len(sequence)>1: sequence:{sequence}')
                     #    print(f'readable_tokens (without current token): {readable_tokens} - {sequence}')
                     sequence_corrected = None
                     #token_corrected = None
-                    for tok, i in self.model.tokenizer.vocabulary.items():
-                        if i == readable_tokens.item():
-                            sequence = self.model.tokenizer.convert_token_to_string(tok, i)
+                    #for tok, i in self.model.tokenizer.vocabulary.items():
+                    #    if i == readable_tokens.item():
+                    #        sequence = self.model.tokenizer.convert_token_to_string(tok, i)
                     #        '''sequence_corrected = sequences_corrected[0]
                     #        if not (last_fsm_state == self.regex_fsm.initial or last_fsm_state is None):
                     #            sequence_corrected = sequences_corrected[-1]'''
@@ -184,35 +183,21 @@ class Regex(Continuation):
                 #        f'readable_tokens corrected (without current token): {token_corrected} - {sequences_corrected}')
 
                     if Params.verbose:
-                        print(f'last_fsm_state:{last_fsm_state}')
+                        print(f'last_fsm_state:{last_fsm_state} - sequence:{sequence}')
 
-                    partial_matches = find_partial_matches(
+                    ((_, state_seq,_),) = find_partial_matches(
                         self.regex_fsm,
-                        sequence,
+                        ["".join(sequence)],
                         start_state=last_fsm_state,
                         activate_log=True
                     )
-
-                    if Params.verbose:
-                        print(f'partial_matches:{partial_matches}')
-                    ((_, state_seq, corresponding_sequence),)=partial_matches
-
-                    if Params.verbose:
-                        print(f'partial_matches:{partial_matches} - state_seq:{state_seq} - corresponding_sequence:{corresponding_sequence}')
-
                     pstate = (
                         "REGEX",
                         state_seq[-1],
-                        last_token_idx + len(readable_tokens),
+                        last_token_idx + len(sequence),
                     )
-                elif len(readable_tokens)>1:
-                    raise ValueError('maximum token to process is 1, get '+len(readable_tokens))
                 else:
-
                     pstate = ("REGEX", -1, last_token_idx)
-
-                # print('pstate')
-                # print(pstate)
 
                 new_pstates.append(pstate)
                 if Params.verbose:
