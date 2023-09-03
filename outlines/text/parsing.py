@@ -422,7 +422,7 @@ def find_partial_matches(
     for string in input_strings:
 
         if not(len(string) == 0 or string[0] not in fsm.alphabet):
-            res = _execute(fsm, string, start_state, res, contains_optional_space=contains_optional_space)
+            res = _execute(fsm, string, start_state, res, contains_optional_space2=contains_optional_space)
 
 
         if Params.verbose and activate_log:
