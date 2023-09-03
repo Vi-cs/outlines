@@ -403,7 +403,9 @@ def find_partial_matches(
 
     #TODO merge with _is_string_available_at_that_state
     if isinstance(input_strings, list):
-        contains_optional_space=True
+        # keep the info that each input_string is a version of a token that could contains space at the beginning
+        if len(input_strings) >1:
+            contains_optional_space = True
         #if it is not the first token
         if not (start_state == fsm.initial or start_state is None):
             input_strings = [input_strings[-1]]
