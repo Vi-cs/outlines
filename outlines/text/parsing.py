@@ -478,7 +478,7 @@ def map_partial_states_to_vocab(
         for i, vocab_string in enumerate(vocabulary):
             if vocab_string == final_state_string:
                 final_state_string_idx = i
-            if i == 1100004:
+            if i == 7559:
                 activate_log = True
             else:
                 activate_log = False
