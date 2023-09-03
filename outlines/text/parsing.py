@@ -350,8 +350,19 @@ def find_partial_matches(
 
         return None if not terminated else i, accepted_states
 
+    def _is_string_available_at_that_state(
+            string: str, state :int, contains_optional_space: bool
+
+    ):
+        if string[0]!=' ' and state!=0 and contains_optional_space:
+            return False;
+        #commented as i think this filtering have been done before
+        #if string[0]==' ' and state==0 and contains_optional_space:
+        #    return False;
+        return True
+
     def _execute(
-            fsm: FSM, input_string: str, start_state: Optional[int] = None, res: typing.Any = None
+            fsm: FSM, input_string: str, start_state: Optional[int] = None, res: typing.Any = None, contains_optional_space: bool = False
     ):
 
 
@@ -369,8 +380,8 @@ def find_partial_matches(
             if Params.verbose and activate_log:
                 print(
                     f'for state, trans in transition_maps.items(): state:{state} - trans:{trans}')
-            # if the trans_key (vocab key of the first letter of the input_string)
-            if trans_key in trans:
+            # if the trans_key (vocab key of the first letter of the input_string) equals the first letter of the state (trans)
+            if trans_key in trans and _is_string_available_at_that_state(input_string, state, contains_optional_space):
                 n_matched, path = _partial_match(trans,input_string )
                 if Params.verbose and activate_log:
                     print(f'n_matched:{n_matched} - path:{path}')
@@ -383,8 +394,11 @@ def find_partial_matches(
         return res
 
     res = set()
+    contains_optional_space=False
 
+    #TODO merge with _is_string_available_at_that_state
     if isinstance(input_strings, list):
+        contains_optional_space=True
         #if it is not the first token
         if not (start_state == fsm.initial or start_state is None):
             input_strings = [input_strings[-1]]
@@ -403,7 +417,7 @@ def find_partial_matches(
     for string in input_strings:
 
         if not(len(string) == 0 or string[0] not in fsm.alphabet):
-            res = _execute(fsm, string, start_state, res)
+            res = _execute(fsm, string, start_state, res, contains_optional_space)
 
 
         if Params.verbose and activate_log:
