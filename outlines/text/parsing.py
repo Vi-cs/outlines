@@ -354,7 +354,7 @@ def find_partial_matches(
             string: str, state :int, contains_optional_space: bool
 
     ):
-        if string[0]!=' ' and state!=0 and contains_optional_space:
+        if string.replace(" ","")!="" and string[0]!=' ' and state!=0 and contains_optional_space:
             return False;
         #commented as i think this filtering have been done before
         #if string[0]==' ' and state==0 and contains_optional_space:
@@ -377,11 +377,13 @@ def find_partial_matches(
 
         # we get to the state and ..
         for state, trans in transition_maps.items():
-            if Params.verbose and activate_log:
-                print(
-                    f'for state, trans in transition_maps.items(): state:{state} - trans:{trans}')
             # if the trans_key (vocab key of the first letter of the input_string) equals the first letter of the state (trans)
+            # and if the string is available at that state
             if trans_key in trans and _is_string_available_at_that_state(input_string, state, contains_optional_space):
+                if Params.verbose and activate_log:
+                    print(
+                        f'for state, trans in transition_maps.items(): state:{state} - trans:{trans}')
+
                 n_matched, path = _partial_match(trans,input_string )
                 if Params.verbose and activate_log:
                     print(f'n_matched:{n_matched} - path:{path}')
