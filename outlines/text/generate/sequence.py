@@ -93,7 +93,8 @@ class Sequence:
             print('decoded token_ids[:, num_prompt_tokens:]')
             print(self.model.tokenizer.decode(token_ids[:, num_prompt_tokens:]))
 
-        print(f'Tokens: {token_ids[:, num_prompt_tokens:]}')
+        if Params.verbose:
+            print(f'Tokens: {token_ids[:, num_prompt_tokens:]}')
         print(f'Output: {self.model.tokenizer.decode(token_ids[:, num_prompt_tokens:])}')
 
         probs = self.create_proposal(token_ids[:, num_prompt_tokens:], probs, self.model.tokenizer)
