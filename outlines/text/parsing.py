@@ -351,11 +351,12 @@ def find_partial_matches(
         return None if not terminated else i, accepted_states
 
     def _is_string_available_at_that_state(
-            string: str, state :int, contains_optional_space: bool
+            string: str, state :int, contains_optional_space3: bool
 
     ):
-        if string.replace(" ","")!="" and string[0]!=' ' and state!=0 and contains_optional_space:
+        if string.replace(" ","")!="" and string[0]!=' ' and state!=0 and contains_optional_space3:
             if Params.verbose and activate_log:
+                print(f'string.replace(" ",""):{string.replace(" ","")} and string[0]:{string[0]} and state:{state} and contains_optional_space3:{contains_optional_space3}')
                 print(f'\'{string}\' not available at state {state}')
             return False
         #commented as i think this filtering have been done before
@@ -364,7 +365,7 @@ def find_partial_matches(
         return True
 
     def _execute(
-            fsm: FSM, input_string: str, start_state: Optional[int] = None, res: typing.Any = None, contains_optional_space: bool = False
+            fsm: FSM, input_string: str, start_state: Optional[int] = None, res: typing.Any = None, contains_optional_space2: bool = False
     ):
 
 
@@ -381,7 +382,7 @@ def find_partial_matches(
         for state, trans in transition_maps.items():
             # if the trans_key (vocab key of the first letter of the input_string) equals the first letter of the state (trans)
             # and if the string is available at that state
-            if trans_key in trans and _is_string_available_at_that_state(input_string, state, contains_optional_space):
+            if trans_key in trans and _is_string_available_at_that_state(input_string, state, contains_optional_space3=contains_optional_space2):
                 if Params.verbose and activate_log:
                     print(
                         f'for state, trans in transition_maps.items(): state:{state} - trans:{trans}')
@@ -421,7 +422,7 @@ def find_partial_matches(
     for string in input_strings:
 
         if not(len(string) == 0 or string[0] not in fsm.alphabet):
-            res = _execute(fsm, string, start_state, res, contains_optional_space)
+            res = _execute(fsm, string, start_state, res, contains_optional_space=contains_optional_space)
 
 
         if Params.verbose and activate_log:
