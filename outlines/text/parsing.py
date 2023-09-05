@@ -496,7 +496,7 @@ def map_partial_states_to_vocab(
             activate_log = False
         log_index = log_index + 1
         if Params.verbose and activate_log:
-            print(f'for symbol_name, fsm in terminals_to_fsms_map.items(): symbol_name:{symbol_name} - fsm: too long - terminals_to_fsms_map:{terminals_to_fsms_map}')
+            print(f'for symbol_name, fsm in terminals_to_fsms_map.items(): symbol_name:{symbol_name} - fsm: too long - terminals_to_fsms_map:too long')
         terminal_possible_paths = defaultdict(set)
         # iterate on vocab string, at index i in the vocab
         for i, vocab_string in enumerate(vocabulary):
