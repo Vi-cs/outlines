@@ -537,9 +537,9 @@ def map_partial_states_to_vocab(
     if final_state_string_idx is not None:
         # Allow transitions to EOS from all terminals FSM states
         if Params.verbose:
-            print(f'terminals_to_fsms_map.items():{terminals_to_fsms_map.items()}')
+            print(f'terminals_to_fsms_map.items():too long')
         for symbol_name, fsm in terminals_to_fsms_map.items():
-            print(f'for symbol_name:{symbol_name}, fsm:{fsm}, fsm.finals:{fsm.finals}')
+            print(f'for symbol_name:{symbol_name}, fsm: too long, fsm.finals: too long')
             for state in fsm.finals:
                 print(f'state:{state}')
                 pstate_to_vocab[(symbol_name, state)].add(final_state_string_idx)
