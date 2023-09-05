@@ -1,2 +1,2 @@
 class Params:
-    verbose = False
+    verbose = True
