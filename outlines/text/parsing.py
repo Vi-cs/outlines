@@ -502,7 +502,7 @@ def map_partial_states_to_vocab(
         for i, vocab_string in enumerate(vocabulary):
             if vocab_string == final_state_string:
                 final_state_string_idx = i
-            if i == 7559 or i==100:
+            if i == 99997559000 or i==9999100:
                 activate_log = True
             else:
                 activate_log = False
@@ -536,8 +536,12 @@ def map_partial_states_to_vocab(
 
     if final_state_string_idx is not None:
         # Allow transitions to EOS from all terminals FSM states
+        if Params.verbose:
+            print(f'terminals_to_fsms_map.items():{terminals_to_fsms_map.items()}')
         for symbol_name, fsm in terminals_to_fsms_map.items():
+            print(f'for symbol_name:{symbol_name}, fsm:{fsm}, fsm.finals:{fsm.finals}')
             for state in fsm.finals:
+                print(f'state:{state}')
                 pstate_to_vocab[(symbol_name, state)].add(final_state_string_idx)
     # print('Output : ')
     # print(pstate_to_vocab)
