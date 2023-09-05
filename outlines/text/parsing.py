@@ -486,7 +486,6 @@ def map_partial_states_to_vocab(
     # Partial parse states to the subsets of the vocabulary that accept them
     pstate_to_vocab = defaultdict(set)
     possible_paths = {}
-    activate_log = True
     log_index = 0
     # symbol_name = REGEX
     for symbol_name, fsm in terminals_to_fsms_map.items():
@@ -500,7 +499,7 @@ def map_partial_states_to_vocab(
         terminal_possible_paths = defaultdict(set)
         # iterate on vocab string, at index i in the vocab
         for i, vocab_string in enumerate(vocabulary):
-            if vocab_string == final_state_string:
+            if vocab_string[0] == final_state_string:
                 final_state_string_idx = i
             if False and (i == 7559000 or i==100):
                 activate_log = True
