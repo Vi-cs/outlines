@@ -265,7 +265,7 @@ class Regex(Continuation):
         return logits + mask
 
 
-def regex(model, regex_string: str, max_tokens: Optional[int] = None):
+def regex(model, regex_string: str, max_tokens: Optional[int] = None, verbose : Optional[bool]=False):
     """Generate text sequences that match the input regex.
 
     Parameters
@@ -278,7 +278,7 @@ def regex(model, regex_string: str, max_tokens: Optional[int] = None):
         The maximum number of tokens to generate.
 
     """
-    return Regex(model, regex_string, max_tokens)
+    return Regex(model, regex_string, max_tokens, verbose)
 
 
 def integer(model, max_tokens: Optional[int] = None):
