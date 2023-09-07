@@ -12,7 +12,7 @@ from pydantic import BaseModel
 from outlines.text.generate.continuation import Continuation
 from outlines.text.json_schema import build_regex_from_schema
 from outlines.text.parsing import find_partial_matches, map_partial_states_to_vocab
-from outlines.params import Params
+from outlines.params import Params, set_verbose_mode
 
 
 class Regex(Continuation):
@@ -28,8 +28,11 @@ class Regex(Continuation):
 
     """
 
-    def __init__(self, model, regex_string: str, max_tokens: Optional[int]):
+    def __init__(self, model, regex_string: str, max_tokens: Optional[int], verbose: Optional[bool]):
         super().__init__(model, max_tokens)
+
+        if verbose is not None:
+            set_verbose_mode(verbose)
 
         if Params.verbose:
             print('#### BEGIN Regex init - Input :  ')
