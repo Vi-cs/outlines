@@ -455,7 +455,7 @@ def map_partial_states_to_vocab(
         vocabulary: Iterable[List[str]],
         terminals_to_fsms_map: Dict[str, FSM],
         partial_match_filter: Callable[
-            [str, Optional[int], Tuple[int, ...]], bool
+            [str, Optional[int], Tuple[int, ...], List[str]], bool
         ] = lambda *args: True,
         final_state_string: Optional[str] = None,
 ) -> Tuple[
@@ -522,7 +522,7 @@ def map_partial_states_to_vocab(
                     if end_idx is not None and end_idx < len(string) - 1:
                         return False
                     return True'''
-                if partial_match_filter(string, end_idx, state_seq):
+                if partial_match_filter(string, end_idx, state_seq, vocab_string):
                     terminal_possible_paths[state_seq[0]].add(state_seq[-1])
                     if Params.verbose and activate_log:
                         print(

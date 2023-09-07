@@ -48,10 +48,13 @@ class Regex(Continuation):
         if Params.verbose:
             print(f'self.regex_fsm.alphabet:{self.regex_fsm.alphabet}')
 
-        def partial_match_filter(string, end_idx, state_seq):
-            '''temp = string[0]
-            if not (state_seq == self.regex_fsm.initial or state_seq is None):
-                temp = string[-1]'''
+        def partial_match_filter(string, end_idx, state_seq, input_strings):
+
+            # if the token contrains 2 versions (one with space, one without), and if it is not the first step => don't keep the first string
+            if not (state_seq == self.regex_fsm.initial or state_seq is None) and len(input_strings)>1:
+                if string == input_strings[0]:
+                    return False
+
             if end_idx is not None and end_idx < len(string) - 1:
                 return False
             return True
