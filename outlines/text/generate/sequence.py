@@ -3,6 +3,7 @@ from typing import List, Optional, Tuple, Union
 import torch
 from outlines.params import Params
 
+
 class Sequence:
     """Represents a sequence generation method."""
 
@@ -26,7 +27,7 @@ class Sequence:
         )
 
     def create_proposal(
-            self, generated_token_ids: torch.LongTensor, logits: torch.DoubleTensor,tokenizer: any = None
+            self, generated_token_ids: torch.LongTensor, logits: torch.DoubleTensor, tokenizer: any = None
     ) -> torch.DoubleTensor:
         """Create a new proposal from the next-token logits."""
         return logits
@@ -265,8 +266,15 @@ class Sequence:
             ).flatten()
 
             if Params.verbose:
+
                 print('CALL decode : ')
-                print(self.model.tokenizer.decode(token_ids[..., num_prompt_tokens:]))
+                result_temp = self.model.tokenizer.decode(token_ids[..., num_prompt_tokens:])
+                result_temp = self.postprocess_completions(result_temp)
+                ##TODO better handling of spaces before :
+                result_temp = [string.replace(' :', ':') for string in result_temp]
+
+                #print(self.model.tokenizer.decode(token_ids[..., num_prompt_tokens:]))
+                print(result_temp)
                 print(token_ids[..., num_prompt_tokens:])
                 # print('CALL decode : ')
                 # print(str(result_temp))
@@ -280,6 +288,8 @@ class Sequence:
         if len(result) == 1:
             return result[0]
 
+        ##TODO better handling of spaces before :
+        result = [string.replace(' :', ':') for string in result]
         return result
 
 
