@@ -271,10 +271,12 @@ class Sequence:
                 result_temp = self.model.tokenizer.decode(token_ids[..., num_prompt_tokens:])
                 result_temp = self.postprocess_completions(result_temp)
                 ##TODO better handling of spaces before :
-                result_temp = [string.replace(' :', ':') for string in result_temp]
+
+                result_temp_quickfixed = [string.replace(' :', ':') for string in result_temp]
 
                 #print(self.model.tokenizer.decode(token_ids[..., num_prompt_tokens:]))
-                print(result_temp)
+                print(f'result_temp:{result_temp}')
+                print(f'result_temp_quickfixed:{result_temp_quickfixed}')
                 print(token_ids[..., num_prompt_tokens:])
                 # print('CALL decode : ')
                 # print(str(result_temp))
