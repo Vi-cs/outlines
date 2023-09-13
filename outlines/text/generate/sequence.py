@@ -96,7 +96,7 @@ class Sequence:
 
         if Params.verbose:
             print(f'Tokens: {token_ids[:, num_prompt_tokens:]}')
-        print(f'Output: {self.model.tokenizer.decode(token_ids[:, num_prompt_tokens:])}')
+            print(f'Output: {self.model.tokenizer.decode(token_ids[:, num_prompt_tokens:])}')
 
         probs = self.create_proposal(token_ids[:, num_prompt_tokens:], probs, self.model.tokenizer)
         probs = torch.nn.functional.softmax(probs, dim=-1)
@@ -265,24 +265,20 @@ class Sequence:
                 updated_token_ids[:, num_prompt_tokens:]
             ).flatten()
 
-            if Params.verbose:
 
-                print('CALL decode : ')
-                result_temp = self.model.tokenizer.decode(token_ids[..., num_prompt_tokens:])
-                result_temp = self.postprocess_completions(result_temp)
-                ##TODO better handling of spaces before :
+            result_temp = self.model.tokenizer.decode(token_ids[..., num_prompt_tokens:])
+            result_temp = self.postprocess_completions(result_temp)
 
-                result_temp_quickfixed = [string.replace(' :', ':') for string in result_temp]
+            ##TODO better handling of spaces before :
+            result_temp_quickfixed = [string.replace(' :', ':') for string in result_temp]
+            print(f'Step output: {result_temp_quickfixed}')
 
-                #print(self.model.tokenizer.decode(token_ids[..., num_prompt_tokens:]))
-                print(f'result_temp:{result_temp}')
-                print(f'result_temp_quickfixed:{result_temp_quickfixed}')
-                print(token_ids[..., num_prompt_tokens:])
-                # print('CALL decode : ')
-                # print(str(result_temp))
-                # result_temp = self.postprocess_completions(result_temp)
-                # print('CALL postprocess_completions : ')
-                # print(str(result_temp))
+
+            # print('CALL decode : ')
+            # print(str(result_temp))
+            # result_temp = self.postprocess_completions(result_temp)
+            # print('CALL postprocess_completions : ')
+            # print(str(result_temp))
 
         result = self.model.tokenizer.decode(token_ids[..., num_prompt_tokens:])
         result = self.postprocess_completions(result)
