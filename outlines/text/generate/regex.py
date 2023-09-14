@@ -221,11 +221,13 @@ class Regex(Continuation):
 
         masks = []
         for pstate in self.pstates:
-            if Params.verbose:
-                print(f'for {pstate} in self.pstates:')
+
             mask = torch.full(
                 (len(self.model.tokenizer.vocabulary),), -math.inf, device=self.device
             )
+            if Params.verbose:
+                print(f'for {pstate} in self.pstates:')
+                print(f'len empty mask:{len(mask)}')
 
             if pstate[1] > -1:
 
