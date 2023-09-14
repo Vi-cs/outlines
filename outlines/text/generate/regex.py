@@ -243,14 +243,15 @@ class Regex(Continuation):
 
         mask = torch.concatenate(masks, dim=0)
 
+        if Params.verbose:
+            print(f'logits:{logits}')
+            print(f'mask:{mask}')
+
         top_1_without_mask_values, top_1_without_mask_indices = torch.topk(logits, 1, dim=-1)
         top_1_with_mask_values, top_1_with_mask_indices = torch.topk(logits + mask, 1, dim=-1)
 
         if top_1_without_mask_values != top_1_with_mask_values:
-            if Params.verbose:
-                print(f'logits:{logits}')
-                print(f'mask:{mask}')
-                
+
             top_10_without_mask_values, top_10_without_mask_indices = torch.topk(logits, 10, dim=-1)
             top_10_with_mask_values, top_10_with_mask_indices = torch.topk(logits + mask, 10, dim=-1)
 
